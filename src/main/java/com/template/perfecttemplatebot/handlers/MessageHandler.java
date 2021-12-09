@@ -52,7 +52,13 @@ public class MessageHandler {
                 return simpleHandler.mockHandler(userId);
             case ("ADMIN_MENU_1"):
                 //list events of user
-                return simpleHandler.mockHandler(userId);
+                botStateCash.saveBotState(userId, BotState.START);
+                StringBuilder stringBuilder = new StringBuilder();
+                userDAO.findAllUsers().forEach(user -> stringBuilder.append(user.getName()).append("\n"));
+                return SendMessage.builder()
+                        .text(stringBuilder.toString())
+                        .chatId(String.valueOf(chatId))
+                        .build();
             case ("ADMIN_MENU_2"):
                 //list events of user
                 return simpleHandler.mockHandler(userId);

@@ -2,7 +2,7 @@ package com.template.perfecttemplatebot.config;
 
 
 import com.template.perfecttemplatebot.bot.TelegramBot;
-import com.template.perfecttemplatebot.bot.TelegramFacade;
+import com.template.perfecttemplatebot.handlers.TelegramFacade;
 import com.template.perfecttemplatebot.botconfig.TelegramBotConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

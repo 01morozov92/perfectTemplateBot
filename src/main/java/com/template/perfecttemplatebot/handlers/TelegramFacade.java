@@ -1,4 +1,4 @@
-package com.template.perfecttemplatebot.bot;
+package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.enums.BotState;
@@ -17,9 +17,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TelegramFacade {
 
-    final MessageHandler messageHandler;
-    final CallbackQueryHandler callbackQueryHandler;
-    final BotStateCash botStateCash;
+     final MessageHandler messageHandler;
+     final CallbackQueryHandler callbackQueryHandler;
+     final BotStateCash botStateCash;
 
     @Value("${telegrambot.adminId}")
     int adminId;
