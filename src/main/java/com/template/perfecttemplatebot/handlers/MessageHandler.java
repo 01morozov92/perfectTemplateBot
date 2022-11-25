@@ -2,6 +2,7 @@ package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.cash.BotStateCash;
+import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
 import com.template.perfecttemplatebot.service.DrawService;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
@@ -63,6 +64,9 @@ public class MessageHandler {
             case ("LIST_OF_EXPIRED_SUBSCRIPTIONS"):
                 return drawService.mockHandler(userId);
             case ("ADD_NEW_SUBSCRIPTION"):
+                User user = userDAO.findByUserId(userId);
+                user.setAmountOfDays(user.getAmountOfDays() + 8);
+                userDAO.save(user);
                 return drawService.mockHandler(userId);
             case ("SUB_MENU_1"):
                 return drawService.mockHandler(userId);

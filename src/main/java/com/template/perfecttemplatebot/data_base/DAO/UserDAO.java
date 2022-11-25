@@ -43,7 +43,7 @@ public class UserDAO {
         String userName = message.getFrom().getUserName();
         User user = new User();
         user.setId(userId);
-        user.setName(userName);
+        user.setName("@" + userName);
         user.setAmountOfDays(0);
         this.save(user);
         sendMessage.setText("");
