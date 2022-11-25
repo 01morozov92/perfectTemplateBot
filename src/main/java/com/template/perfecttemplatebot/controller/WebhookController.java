@@ -1,7 +1,7 @@
 package com.template.perfecttemplatebot.controller;
 
 import com.template.perfecttemplatebot.bot.TelegramBot;
-import com.template.perfecttemplatebot.service.KeyBoardTemplates;
+import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.annotation.PostConstruct;
 
-import static com.template.perfecttemplatebot.config.ApplicationContextProvider.getApplicationContext;
+import static com.template.perfecttemplatebot.app_config.ApplicationContextProvider.getApplicationContext;
 
 @RestController
 public class WebhookController {

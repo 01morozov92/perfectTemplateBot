@@ -1,10 +1,10 @@
-package com.template.perfecttemplatebot.handlers;
+package com.template.perfecttemplatebot.service;
 
-import com.template.perfecttemplatebot.DAO.UserDAO;
 import com.template.perfecttemplatebot.cash.BotStateCash;
-import com.template.perfecttemplatebot.entity.User;
+import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
+import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
-import com.template.perfecttemplatebot.service.KeyBoardTemplates;
+import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -12,40 +12,21 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
-public class SimpleHandler {
-
-    private final KeyBoardTemplates keyBoardTemplates;
+public class DrawService {
     private final UserDAO userDAO;
     private final BotStateCash botStateCash;
 
     @Autowired
-    public SimpleHandler(KeyBoardTemplates keyBoardTemplates, UserDAO userDAO, BotStateCash botStateCash) {
-        this.keyBoardTemplates = keyBoardTemplates;
+    public DrawService(UserDAO userDAO, BotStateCash botStateCash) {
         this.userDAO = userDAO;
         this.botStateCash = botStateCash;
     }
 
-    public BotApiMethod<?> drawFirstKeyBoardWithMsg(long userId) {
+    public BotApiMethod<?> drawKeyBoardWithMsg(long userId, KeyBoardTemplates.KeyBoard keyBoard) {
         SendMessage replyMessage = new SendMessage();
         replyMessage.setChatId(String.valueOf(userId));
-        replyMessage.setText("Это первая клавиатура");
-        replyMessage.setReplyMarkup(keyBoardTemplates.getFirstKeyBoard());
-        return replyMessage;
-    }
-
-    public BotApiMethod<?> drawSecondKeyBoardWithMsg(long userId) {
-        SendMessage replyMessage = new SendMessage();
-        replyMessage.setChatId(String.valueOf(userId));
-        replyMessage.setText("Это вторая клавиатура");
-        replyMessage.setReplyMarkup(keyBoardTemplates.getSecondKeyBoard());
-        return replyMessage;
-    }
-
-    public BotApiMethod<?> drawThirdKeyBoardWithMsg(long userId) {
-        SendMessage replyMessage = new SendMessage();
-        replyMessage.setChatId(String.valueOf(userId));
-        replyMessage.setText("Это третья клавиатура");
-        replyMessage.setReplyMarkup(keyBoardTemplates.getThirdKeyBoard());
+        replyMessage.setText(keyBoard.getKeyBoardDescription());
+        replyMessage.setReplyMarkup(keyBoard.getReplyKeyboard());
         return replyMessage;
     }
 

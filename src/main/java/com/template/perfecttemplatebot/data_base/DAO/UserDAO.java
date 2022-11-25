@@ -1,7 +1,7 @@
-package com.template.perfecttemplatebot.DAO;
+package com.template.perfecttemplatebot.data_base.DAO;
 
-import com.template.perfecttemplatebot.entity.User;
-import com.template.perfecttemplatebot.repo.UserRepository;
+import com.template.perfecttemplatebot.data_base.entity.User;
+import com.template.perfecttemplatebot.data_base.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

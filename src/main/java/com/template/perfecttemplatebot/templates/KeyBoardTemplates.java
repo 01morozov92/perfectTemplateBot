@@ -1,8 +1,7 @@
-package com.template.perfecttemplatebot.service;
+package com.template.perfecttemplatebot.templates;
 
-import com.template.perfecttemplatebot.DAO.UserDAO;
-import lombok.Getter;
-import lombok.Setter;
+import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -27,6 +26,19 @@ public class KeyBoardTemplates {
 
     public KeyBoardTemplates(UserDAO userDAO) {
         this.userDAO = userDAO;
+    }
+
+    private SendMessage createMessageWithKeyboard(final long chatId,
+                                                  String textMessage,
+                                                  final ReplyKeyboardMarkup replyKeyboardMarkup) {
+        final SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setText(textMessage);
+        if (replyKeyboardMarkup != null) {
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
+        }
+        return sendMessage;
     }
 
     public SendMessage getMainMenuMessage(final long chatId, final String textMessage, final long userId) {
@@ -64,21 +76,7 @@ public class KeyBoardTemplates {
         return replyKeyboardMarkup;
     }
 
-    private SendMessage createMessageWithKeyboard(final long chatId,
-                                                  String textMessage,
-                                                  final ReplyKeyboardMarkup replyKeyboardMarkup) {
-        final SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(String.valueOf(chatId));
-        sendMessage.setText(textMessage);
-        if (replyKeyboardMarkup != null) {
-            sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        }
-        return sendMessage;
-    }
-
-    //set callbackquery keyboard for chang freq
-    public InlineKeyboardMarkup getFirstKeyBoard() {
+    public KeyBoard getFirstKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtn = new InlineKeyboardButton();
@@ -106,11 +104,11 @@ public class KeyBoardTemplates {
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return inlineKeyboardMarkup;
+        return new KeyBoard(inlineKeyboardMarkup, "Это первая клавиатура");
     }
 
     //set calbackquery keyboard for push edit
-    public ReplyKeyboard getSecondKeyBoard() {
+    public KeyBoard getSecondKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -140,10 +138,10 @@ public class KeyBoardTemplates {
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return inlineKeyboardMarkup;
+        return new KeyBoard(inlineKeyboardMarkup, "Это вторая клавиатура");
     }
 
-    public ReplyKeyboard getThirdKeyBoard() {
+    public KeyBoard getThirdKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -173,6 +171,20 @@ public class KeyBoardTemplates {
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return inlineKeyboardMarkup;
+        return new KeyBoard(inlineKeyboardMarkup, "Это третья клавиатура");
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    static public class KeyBoard{
+
+        private final ReplyKeyboard replyKeyboard;
+        private final String keyBoardDescription;
+
+        public KeyBoard(ReplyKeyboard replyKeyboard, String keyBoardDescription) {
+            this.replyKeyboard = replyKeyboard;
+            this.keyBoardDescription = keyBoardDescription;
+        }
     }
 }

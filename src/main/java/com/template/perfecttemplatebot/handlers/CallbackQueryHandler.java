@@ -2,7 +2,8 @@ package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.enums.BotState;
-import com.template.perfecttemplatebot.service.KeyBoardTemplates;
+import com.template.perfecttemplatebot.service.DrawService;
+import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -14,13 +15,13 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 public class CallbackQueryHandler {
     private final BotStateCash botStateCash;
     private final KeyBoardTemplates keyBoardTemplates;
-    private final SimpleHandler simpleHandler;
+    private final DrawService drawService;
 
     @Autowired
-    public CallbackQueryHandler(BotStateCash botStateCash, KeyBoardTemplates keyBoardTemplates, SimpleHandler simpleHandler) {
+    public CallbackQueryHandler(BotStateCash botStateCash, KeyBoardTemplates keyBoardTemplates, DrawService drawService) {
         this.botStateCash = botStateCash;
         this.keyBoardTemplates = keyBoardTemplates;
-        this.simpleHandler = simpleHandler;
+        this.drawService = drawService;
     }
 
     public BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
@@ -34,7 +35,7 @@ public class CallbackQueryHandler {
         switch (data) {
             //первая клавиатура
             case ("first_button"):
-                callBackAnswer = simpleHandler.drawSecondKeyBoardWithMsg(userId);
+                callBackAnswer = drawService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSecondKeyBoard());
                 botStateCash.saveBotState(userId, BotState.START);
                 break;
             case ("second_button"):
@@ -51,7 +52,7 @@ public class CallbackQueryHandler {
                 break;
             //вторая клавиатура
             case ("first_btn_second_menu"):
-                callBackAnswer = simpleHandler.drawThirdKeyBoardWithMsg(chatId);
+                callBackAnswer = drawService.drawKeyBoardWithMsg(chatId, keyBoardTemplates.getThirdKeyBoard());
                 botStateCash.saveBotState(userId, BotState.START);
                 break;
             case ("second_btn_second_menu"):

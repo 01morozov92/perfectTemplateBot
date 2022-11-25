@@ -1,9 +1,10 @@
 package com.template.perfecttemplatebot.handlers;
 
-import com.template.perfecttemplatebot.DAO.UserDAO;
+import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.enums.BotState;
-import com.template.perfecttemplatebot.service.KeyBoardTemplates;
+import com.template.perfecttemplatebot.service.DrawService;
+import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,13 +16,13 @@ public class MessageHandler {
     private final UserDAO userDAO;
     private final KeyBoardTemplates keyBoardTemplates;
     private final BotStateCash botStateCash;
-    private final SimpleHandler simpleHandler;
+    private final DrawService drawService;
 
-    public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, SimpleHandler simpleHandler) {
+    public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, DrawService drawService) {
         this.userDAO = userDAO;
         this.keyBoardTemplates = keyBoardTemplates;
         this.botStateCash = botStateCash;
-        this.simpleHandler = simpleHandler;
+        this.drawService = drawService;
     }
 
     //обрабатывает апдейт в зависимости от назначенного ранее состояния бота
@@ -32,7 +33,7 @@ public class MessageHandler {
         sendMessage.setChatId(String.valueOf(chatId));
         //if new user
         if (!userDAO.isExist(userId)) {
-            return simpleHandler.saveNewUser(message, userId, sendMessage);
+            return drawService.saveNewUser(message, userId, sendMessage);
         }
         //save state in to cache
         botStateCash.saveBotState(userId, botState);
@@ -43,13 +44,13 @@ public class MessageHandler {
                         "Воспользуйтесь главным меню", userId);
             case ("MENU_1"):
                 //list events of user
-                return simpleHandler.drawFirstKeyBoardWithMsg(userId);
+                return drawService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getFirstKeyBoard());
             case ("MENU_2"):
                 //list events of user
-                return simpleHandler.mockHandler(userId);
+                return drawService.mockHandler(userId);
             case ("MENU_3"):
                 //list events of user
-                return simpleHandler.mockHandler(userId);
+                return drawService.mockHandler(userId);
             case ("ADMIN_MENU_1"):
                 //list events of user
                 botStateCash.saveBotState(userId, BotState.START);
@@ -61,13 +62,13 @@ public class MessageHandler {
                         .build();
             case ("ADMIN_MENU_2"):
                 //list events of user
-                return simpleHandler.mockHandler(userId);
+                return drawService.mockHandler(userId);
             case ("SUB_MENU_1"):
                 //list events of user
-                return simpleHandler.mockHandler(userId);
+                return drawService.mockHandler(userId);
             case ("SUB_MENU_2"):
                 //list events of user
-                return simpleHandler.mockHandler(userId, "Все супер ГУД!");
+                return drawService.mockHandler(userId, "Все супер ГУД!");
             default:
                 throw new IllegalStateException("Unexpected value: " + botState);
         }

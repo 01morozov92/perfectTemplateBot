@@ -1,4 +1,4 @@
-package com.template.perfecttemplatebot.entity;
+package com.template.perfecttemplatebot.data_base.entity;
 
 
 import lombok.Getter;

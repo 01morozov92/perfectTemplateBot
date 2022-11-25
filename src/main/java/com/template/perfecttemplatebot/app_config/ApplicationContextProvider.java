@@ -1,4 +1,4 @@
-package com.template.perfecttemplatebot.config;
+package com.template.perfecttemplatebot.app_config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

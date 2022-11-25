@@ -1,9 +1,9 @@
-package com.template.perfecttemplatebot.config;
+package com.template.perfecttemplatebot.app_config;
 
 
 import com.template.perfecttemplatebot.bot.TelegramBot;
 import com.template.perfecttemplatebot.handlers.TelegramFacade;
-import com.template.perfecttemplatebot.botconfig.TelegramBotConfig;
+import com.template.perfecttemplatebot.bot_config.TelegramBotConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;

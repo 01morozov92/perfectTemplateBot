@@ -1,4 +1,4 @@
-package com.template.perfecttemplatebot.botconfig;
+package com.template.perfecttemplatebot.bot_config;
 
 import lombok.AccessLevel;
 import lombok.Getter;
