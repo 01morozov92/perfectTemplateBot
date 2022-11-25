@@ -14,8 +14,6 @@ import java.net.URL;
 /**
  * Special app invoker for Heroku free plan.
  * Provides app not too sleep after 30 min inactive.
- *
- * @author Sergei Viacheslaev
  */
 @Service
 @Slf4j
