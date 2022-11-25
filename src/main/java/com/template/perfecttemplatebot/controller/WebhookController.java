@@ -36,10 +36,10 @@ public class WebhookController {
         return telegramBot.onWebhookUpdateReceived(update);
     }
 
-//    @GetMapping
-//    public ResponseEntity get() {
-//        return ResponseEntity.ok().build();
-//    }
+    @GetMapping
+    public ResponseEntity get() {
+        return ResponseEntity.ok().build();
+    }
 
 //    @PostConstruct
 //    @SneakyThrows
