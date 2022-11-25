@@ -92,6 +92,14 @@
                     </excludes>
                 </configuration>
             </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.liquibase</groupId>-->
+<!--                <artifactId>liquibase-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <changeLogFile>src/main/resources/db/changelog/db.changelog-master.yaml</changeLogFile>-->
+<!--                    <url>${env.JDBC_DATABASE_URL}</url>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
