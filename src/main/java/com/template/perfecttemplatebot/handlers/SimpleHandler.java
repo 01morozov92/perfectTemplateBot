@@ -4,7 +4,7 @@ import com.template.perfecttemplatebot.DAO.UserDAO;
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
-import com.template.perfecttemplatebot.service.MenuService;
+import com.template.perfecttemplatebot.service.KeyBoardTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -14,13 +14,13 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 @Component
 public class SimpleHandler {
 
-    private final MenuService menuService;
+    private final KeyBoardTemplates keyBoardTemplates;
     private final UserDAO userDAO;
     private final BotStateCash botStateCash;
 
     @Autowired
-    public SimpleHandler(MenuService menuService, UserDAO userDAO, BotStateCash botStateCash) {
-        this.menuService = menuService;
+    public SimpleHandler(KeyBoardTemplates keyBoardTemplates, UserDAO userDAO, BotStateCash botStateCash) {
+        this.keyBoardTemplates = keyBoardTemplates;
         this.userDAO = userDAO;
         this.botStateCash = botStateCash;
     }
@@ -29,7 +29,7 @@ public class SimpleHandler {
         SendMessage replyMessage = new SendMessage();
         replyMessage.setChatId(String.valueOf(userId));
         replyMessage.setText("Это первая клавиатура");
-        replyMessage.setReplyMarkup(menuService.getFirstKeyBoard());
+        replyMessage.setReplyMarkup(keyBoardTemplates.getFirstKeyBoard());
         return replyMessage;
     }
 
@@ -37,7 +37,7 @@ public class SimpleHandler {
         SendMessage replyMessage = new SendMessage();
         replyMessage.setChatId(String.valueOf(userId));
         replyMessage.setText("Это вторая клавиатура");
-        replyMessage.setReplyMarkup(menuService.getSecondKeyBoard());
+        replyMessage.setReplyMarkup(keyBoardTemplates.getSecondKeyBoard());
         return replyMessage;
     }
 
@@ -45,7 +45,7 @@ public class SimpleHandler {
         SendMessage replyMessage = new SendMessage();
         replyMessage.setChatId(String.valueOf(userId));
         replyMessage.setText("Это третья клавиатура");
-        replyMessage.setReplyMarkup(menuService.getThirdKeyBoard());
+        replyMessage.setReplyMarkup(keyBoardTemplates.getThirdKeyBoard());
         return replyMessage;
     }
 

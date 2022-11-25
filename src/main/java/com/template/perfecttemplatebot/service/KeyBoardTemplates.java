@@ -1,7 +1,6 @@
 package com.template.perfecttemplatebot.service;
 
 import com.template.perfecttemplatebot.DAO.UserDAO;
-import com.template.perfecttemplatebot.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,14 +18,14 @@ import java.util.List;
 @Service
 @Getter
 @Setter
-public class MenuService {
+public class KeyBoardTemplates {
 
     private UserDAO userDAO;
 
     @Value("${telegrambot.adminId}")
     private int admin_id;
 
-    public MenuService(UserDAO userDAO) {
+    public KeyBoardTemplates(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
 

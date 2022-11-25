@@ -2,26 +2,24 @@ package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.enums.BotState;
-import com.template.perfecttemplatebot.service.MenuService;
+import com.template.perfecttemplatebot.service.KeyBoardTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 @Component
 //processes incoming callback's
 public class CallbackQueryHandler {
     private final BotStateCash botStateCash;
-    private final MenuService menuService;
+    private final KeyBoardTemplates keyBoardTemplates;
     private final SimpleHandler simpleHandler;
 
     @Autowired
-    public CallbackQueryHandler(BotStateCash botStateCash, MenuService menuService, SimpleHandler simpleHandler) {
+    public CallbackQueryHandler(BotStateCash botStateCash, KeyBoardTemplates keyBoardTemplates, SimpleHandler simpleHandler) {
         this.botStateCash = botStateCash;
-        this.menuService = menuService;
+        this.keyBoardTemplates = keyBoardTemplates;
         this.simpleHandler = simpleHandler;
     }
 

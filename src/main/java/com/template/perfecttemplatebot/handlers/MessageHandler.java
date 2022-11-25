@@ -3,7 +3,7 @@ package com.template.perfecttemplatebot.handlers;
 import com.template.perfecttemplatebot.DAO.UserDAO;
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.enums.BotState;
-import com.template.perfecttemplatebot.service.MenuService;
+import com.template.perfecttemplatebot.service.KeyBoardTemplates;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,13 +13,13 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public class MessageHandler {
 
     private final UserDAO userDAO;
-    private final MenuService menuService;
+    private final KeyBoardTemplates keyBoardTemplates;
     private final BotStateCash botStateCash;
     private final SimpleHandler simpleHandler;
 
-    public MessageHandler(UserDAO userDAO, MenuService menuService, BotStateCash botStateCash, SimpleHandler simpleHandler) {
+    public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, SimpleHandler simpleHandler) {
         this.userDAO = userDAO;
-        this.menuService = menuService;
+        this.keyBoardTemplates = keyBoardTemplates;
         this.botStateCash = botStateCash;
         this.simpleHandler = simpleHandler;
     }
@@ -39,7 +39,7 @@ public class MessageHandler {
         //if state =...
         switch (botState.name()) {
             case ("START"):
-                return menuService.getMainMenuMessage(message.getChatId(),
+                return keyBoardTemplates.getMainMenuMessage(message.getChatId(),
                         "Воспользуйтесь главным меню", userId);
             case ("MENU_1"):
                 //list events of user

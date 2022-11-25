@@ -47,7 +47,7 @@ public class TelegramFacade {
         return null;
     }
 
-    //обработка текстового сообщения и установка соответсвующего состояния бота
+    //обработка текстового сообщения и установка соответствующего состояния бота
     private BotApiMethod<?> handleInputMessage(Message message) {
         BotState botState;
         String inputMsg = message.getText();
