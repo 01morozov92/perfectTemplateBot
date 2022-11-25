@@ -26,7 +26,7 @@ public class WebhookController {
     @Value("${telegrambot.webHookPath}")
     String webHookPath;
 
-    public WebhookController(TelegramBot telegramBot, KeyBoardTemplates keyBoardTemplates) {
+    public WebhookController(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
     }
 
