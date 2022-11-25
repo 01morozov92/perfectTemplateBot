@@ -25,13 +25,12 @@ public class WebhookController {
     int adminId;
     @Value("${telegrambot.webHookPath}")
     String webHookPath;
-    private final KeyBoardTemplates keyBoardTemplates;
 
     public WebhookController(TelegramBot telegramBot, KeyBoardTemplates keyBoardTemplates) {
         this.telegramBot = telegramBot;
-        this.keyBoardTemplates = keyBoardTemplates;
     }
-// point for message
+
+    // point for message
     @PostMapping("/")
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
         return telegramBot.onWebhookUpdateReceived(update);
