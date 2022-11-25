@@ -1,3 +1,19 @@
 databaseChangeLog:
-  - include:
-      file: db/changelog/users.yaml
+  - changeSet:
+      id: users
+      author: Moroz
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(200)
+                  constraints:
+                    nullable: true
