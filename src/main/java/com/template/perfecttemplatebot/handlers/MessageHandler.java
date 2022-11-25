@@ -42,17 +42,13 @@ public class MessageHandler {
             case ("START"):
                 return keyBoardTemplates.getMainMenuMessage(message.getChatId(),
                         "Воспользуйтесь главным меню", userId);
-            case ("MENU_1"):
-                //list events of user
+            case ("MY_DATE"):
                 return drawService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getFirstKeyBoard());
             case ("MENU_2"):
-                //list events of user
                 return drawService.mockHandler(userId);
             case ("MENU_3"):
-                //list events of user
                 return drawService.mockHandler(userId);
-            case ("ADMIN_MENU_1"):
-                //list events of user
+            case ("LIST_OF_ALL_SUBSCRIPTIONS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 StringBuilder stringBuilder = new StringBuilder();
                 userDAO.findAllUsers().forEach(user -> stringBuilder.append(user.getName()).append("\n"));
@@ -60,14 +56,17 @@ public class MessageHandler {
                         .text(stringBuilder.toString())
                         .chatId(String.valueOf(chatId))
                         .build();
-            case ("ADMIN_MENU_2"):
-                //list events of user
+            case ("LIST_OF_PAYED_SUBSCRIPTIONS"):
+                return drawService.mockHandler(userId);
+            case ("LIST_OF_EXPIRING_SUBSCRIPTIONS"):
+                return drawService.mockHandler(userId);
+            case ("LIST_OF_EXPIRED_SUBSCRIPTIONS"):
+                return drawService.mockHandler(userId);
+            case ("ADD_NEW_SUBSCRIPTION"):
                 return drawService.mockHandler(userId);
             case ("SUB_MENU_1"):
-                //list events of user
                 return drawService.mockHandler(userId);
             case ("SUB_MENU_2"):
-                //list events of user
                 return drawService.mockHandler(userId, "Все супер ГУД!");
             default:
                 throw new IllegalStateException("Unexpected value: " + botState);

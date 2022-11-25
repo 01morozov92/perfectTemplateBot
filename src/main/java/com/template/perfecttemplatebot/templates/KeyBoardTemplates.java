@@ -1,7 +1,9 @@
 package com.template.perfecttemplatebot.templates;
 
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +63,7 @@ public class KeyBoardTemplates {
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
         KeyboardRow row3 = new KeyboardRow();
-        row1.add(new KeyboardButton("Меню1"));
+        row1.add(new KeyboardButton("Моя дата оплаты"));
         row2.add(new KeyboardButton("Меню2"));
         row3.add((new KeyboardButton("Меню3")));
         keyboard.add(row1);
@@ -68,9 +71,18 @@ public class KeyBoardTemplates {
         keyboard.add(row3);
         if (userId == admin_id) {
             KeyboardRow row4 = new KeyboardRow();
-            row4.add(new KeyboardButton("Админсоке меню 1"));
-            row4.add(new KeyboardButton("Админсоке меню 2"));
+            KeyboardRow row5 = new KeyboardRow();
+            KeyboardRow row6 = new KeyboardRow();
+            KeyboardRow row7 = new KeyboardRow();
+            row4.add(new KeyboardButton("Список всех участников"));
+            row4.add(new KeyboardButton("Список оплативших"));
+            row5.add(new KeyboardButton("Список истекающих оплат"));
+            row6.add(new KeyboardButton("Список просроченных оплат"));
+            row7.add(new KeyboardButton("Добавить/Продлить оплату"));
             keyboard.add(row4);
+            keyboard.add(row5);
+            keyboard.add(row6);
+            keyboard.add(row7);
         }
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
@@ -177,7 +189,7 @@ public class KeyBoardTemplates {
     @Getter
     @Setter
     @Builder
-    static public class KeyBoard{
+    static public class KeyBoard {
 
         private final ReplyKeyboard replyKeyboard;
         private final String keyBoardDescription;

@@ -2,8 +2,6 @@ package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.enums.BotState;
-import com.template.perfecttemplatebot.handlers.CallbackQueryHandler;
-import com.template.perfecttemplatebot.handlers.MessageHandler;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,8 +55,8 @@ public class TelegramFacade {
             case "/start":
                 botState = BotState.START;
                 break;
-            case "Меню1":
-                botState = BotState.MENU_1;
+            case "Моя дата оплаты":
+                botState = BotState.MY_DATE;
                 break;
             case "Меню2":
                 botState = BotState.MENU_2;
@@ -66,14 +64,29 @@ public class TelegramFacade {
             case "Меню3":
                 botState = BotState.MENU_3;
                 break;
-            case "Админсоке меню 1":
+            case "Список всех участников":
                 if (message.getFrom().getId() == adminId)
-                botState = BotState.ADMIN_MENU_1;
+                botState = BotState.LIST_OF_ALL_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
-            case "Админсоке меню 2":
+            case "Список оплативших":
                 if (message.getFrom().getId() == adminId)
-                botState = BotState.ADMIN_MENU_2;
+                botState = BotState.LIST_OF_PAYED_SUBSCRIPTIONS;
+                else botState = BotState.START;
+                break;
+            case "Список истекающих оплат":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.LIST_OF_EXPIRING_SUBSCRIPTIONS;
+                else botState = BotState.START;
+                break;
+            case "Список просроченных оплат":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.LIST_OF_EXPIRED_SUBSCRIPTIONS;
+                else botState = BotState.START;
+                break;
+            case "Добавить/Продлить оплату":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.ADD_NEW_SUBSCRIPTION;
                 else botState = BotState.START;
                 break;
             default:
