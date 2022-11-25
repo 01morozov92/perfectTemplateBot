@@ -2,10 +2,8 @@ package com.template.perfecttemplatebot.enums;
 
 public enum BotState {
     START,
-    FIRST_KEYBOARD,
-    SECOND_KEYBOARD,
-    MY_DATE,
-    MENU_2,
+    AMOUNT_OF_DAYS,
+    REMOVE_ONE_DAY,
     MENU_3,
     LIST_OF_ALL_SUBSCRIPTIONS,
     LIST_OF_PAYED_SUBSCRIPTIONS,

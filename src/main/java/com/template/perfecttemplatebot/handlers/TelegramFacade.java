@@ -55,16 +55,16 @@ public class TelegramFacade {
             case "/start":
                 botState = BotState.START;
                 break;
-            case "Моя дата оплаты":
-                botState = BotState.MY_DATE;
+            case "Осталось тренировок":
+                botState = BotState.AMOUNT_OF_DAYS;
                 break;
-            case "Меню2":
-                botState = BotState.MENU_2;
+            case "Списать тренировку":
+                botState = BotState.REMOVE_ONE_DAY;
                 break;
             case "Меню3":
                 botState = BotState.MENU_3;
                 break;
-            case "Список всех участников":
+            case "Список всех оплат":
                 if (message.getFrom().getId() == adminId)
                 botState = BotState.LIST_OF_ALL_SUBSCRIPTIONS;
                 else botState = BotState.START;

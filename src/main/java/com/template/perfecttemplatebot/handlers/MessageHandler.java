@@ -42,9 +42,9 @@ public class MessageHandler {
             case ("START"):
                 return keyBoardTemplates.getMainMenuMessage(message.getChatId(),
                         "Воспользуйтесь главным меню", userId);
-            case ("MY_DATE"):
+            case ("AMOUNT_OF_DAYS"):
                 return drawService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getFirstKeyBoard());
-            case ("MENU_2"):
+            case ("REMOVE_ONE_DAY"):
                 return drawService.mockHandler(userId);
             case ("MENU_3"):
                 return drawService.mockHandler(userId);

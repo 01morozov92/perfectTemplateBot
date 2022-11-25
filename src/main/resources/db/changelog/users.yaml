@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: users
-      author: Moroz
+      author: Morozov
       changes:
         - createTable:
             tableName: users
@@ -17,3 +17,9 @@ databaseChangeLog:
                   type: varchar(200)
                   constraints:
                     nullable: true
+              - column:
+                  name: amount_of_days
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false

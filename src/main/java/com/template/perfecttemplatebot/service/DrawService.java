@@ -49,6 +49,7 @@ public class DrawService {
         User user = new User();
         user.setId(userId);
         user.setName(userName);
+        user.setAmountOfDays(0);
         userDAO.save(user);
         sendMessage.setText("");
         botStateCash.saveBotState(userId, BotState.START);

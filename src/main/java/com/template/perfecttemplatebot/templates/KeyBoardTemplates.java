@@ -63,8 +63,8 @@ public class KeyBoardTemplates {
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
         KeyboardRow row3 = new KeyboardRow();
-        row1.add(new KeyboardButton("Моя дата оплаты"));
-        row2.add(new KeyboardButton("Меню2"));
+        row1.add(new KeyboardButton("Осталось тренировок"));
+        row2.add(new KeyboardButton("Списать тренировку"));
         row3.add((new KeyboardButton("Меню3")));
         keyboard.add(row1);
         keyboard.add(row2);
@@ -74,7 +74,7 @@ public class KeyBoardTemplates {
             KeyboardRow row5 = new KeyboardRow();
             KeyboardRow row6 = new KeyboardRow();
             KeyboardRow row7 = new KeyboardRow();
-            row4.add(new KeyboardButton("Список всех участников"));
+            row4.add(new KeyboardButton("Список всех оплат"));
             row4.add(new KeyboardButton("Список оплативших"));
             row5.add(new KeyboardButton("Список истекающих оплат"));
             row6.add(new KeyboardButton("Список просроченных оплат"));
