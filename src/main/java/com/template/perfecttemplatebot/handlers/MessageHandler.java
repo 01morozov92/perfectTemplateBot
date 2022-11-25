@@ -33,7 +33,7 @@ public class MessageHandler {
         sendMessage.setChatId(String.valueOf(chatId));
         //if new user
         if (!userDAO.isExist(userId)) {
-            return drawService.saveNewUser(message, userId, sendMessage);
+            return userDAO.saveNewUser(message, userId, sendMessage);
         }
         //save state in to cache
         botStateCash.saveBotState(userId, botState);
