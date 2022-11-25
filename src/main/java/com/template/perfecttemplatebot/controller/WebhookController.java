@@ -36,23 +36,23 @@ public class WebhookController {
         return telegramBot.onWebhookUpdateReceived(update);
     }
 
-    @GetMapping
-    public ResponseEntity get() {
-        return ResponseEntity.ok().build();
-    }
+//    @GetMapping
+//    public ResponseEntity get() {
+//        return ResponseEntity.ok().build();
+//    }
 
-    @PostConstruct
-    @SneakyThrows
-    //after every restart app
-    private void afterStart() {
-        SetWebhook setWebhook = (SetWebhook) getApplicationContext().getAutowireCapableBeanFactory().getBean("setWebhookInstance");
-        setWebhook.setDropPendingUpdates(true);
-        setWebhook.setUrl(webHookPath);
-        telegramBot.execute(setWebhook);
-
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(String.valueOf(adminId));
-        sendMessage.setText("Произошла перезагрузка!");
-        telegramBot.execute(sendMessage);
-    }
+//    @PostConstruct
+//    @SneakyThrows
+//    //after every restart app
+//    private void afterStart() {
+//        SetWebhook setWebhook = (SetWebhook) getApplicationContext().getAutowireCapableBeanFactory().getBean("setWebhookInstance");
+//        setWebhook.setDropPendingUpdates(true);
+//        setWebhook.setUrl(webHookPath);
+//        telegramBot.execute(setWebhook);
+//
+//        SendMessage sendMessage = new SendMessage();
+//        sendMessage.setChatId(String.valueOf(adminId));
+//        sendMessage.setText("Произошла перезагрузка!");
+//        telegramBot.execute(sendMessage);
+//    }
 }
