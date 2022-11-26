@@ -89,15 +89,15 @@ public class TelegramFacade {
                 if (message.getFrom().getId() == adminId)
                     botState = BotState.ADD_NEW_SUBSCRIPTION;
                 else botState = BotState.START;
-                SendMessage.builder()
-                        .text("Введите имя нового участника и кол-во оплаченных им тренировок в формате: \n" +
-                                "Иван Иванов @megaIvan 8")
-                        .chatId(String.valueOf(message.getFrom().getId()))
-                        .build();
                 break;
             case "Продлить подписку":
                 if (message.getFrom().getId() == adminId)
                     botState = BotState.RENEW_SUBSCRIPTION;
+                else botState = BotState.START;
+                break;
+            case "Ожидающие подтверждения":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.CHECK_WAITING_ROOM;
                 else botState = BotState.START;
                 break;
             default:

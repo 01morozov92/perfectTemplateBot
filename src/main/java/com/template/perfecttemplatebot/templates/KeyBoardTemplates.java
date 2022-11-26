@@ -1,6 +1,7 @@
 package com.template.perfecttemplatebot.templates;
 
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
+import com.template.perfecttemplatebot.data_base.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,6 +72,7 @@ public class KeyBoardTemplates {
             KeyboardRow row4 = new KeyboardRow();
             KeyboardRow row5 = new KeyboardRow();
             KeyboardRow row6 = new KeyboardRow();
+            KeyboardRow row7 = new KeyboardRow();
             row3.add(new KeyboardButton("Списать тренировку"));
             row4.add(new KeyboardButton("Все подписки"));
             row4.add(new KeyboardButton("Действующие подписки"));
@@ -78,10 +80,12 @@ public class KeyBoardTemplates {
             row5.add(new KeyboardButton("Просроченные подписки"));
             row6.add(new KeyboardButton("Добавить подписку"));
             row6.add(new KeyboardButton("Продлить подписку"));
+            row7.add(new KeyboardButton("Ожидающие подтверждения"));
             keyboard.add(row3);
             keyboard.add(row4);
             keyboard.add(row5);
             keyboard.add(row6);
+            keyboard.add(row7);
         }
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
@@ -185,17 +189,35 @@ public class KeyBoardTemplates {
         return new KeyBoard(inlineKeyboardMarkup, "Это третья клавиатура");
     }
 
-    @Getter
-    @Setter
-    @Builder
-    static public class KeyBoard {
-
-        private final ReplyKeyboard replyKeyboard;
-        private final String keyBoardDescription;
-
-        public KeyBoard(ReplyKeyboard replyKeyboard, String keyBoardDescription) {
-            this.replyKeyboard = replyKeyboard;
-            this.keyBoardDescription = keyBoardDescription;
+    public KeyBoard createWaitingKeyboard() {
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        List<User> users = userDAO.findAllBySubscriber(false);
+        for (User user : users) {
+            rowList.add(getButton(
+                    String.format("%s %s", user.getFirstName(), user.getLastName()),
+                    user.getTelegramTag()
+            ));
         }
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        if (rowList.isEmpty()) {
+            rowList.add(getButton(
+                    "Назад",
+                    "back_from_waiting_list"
+            ));
+            inlineKeyboardMarkup.setKeyboard(rowList);
+            return new KeyBoard(inlineKeyboardMarkup, "Нет ожидающих подтверждения");
+        }
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        return new KeyBoard(inlineKeyboardMarkup, "Ожидающие подтверждения");
+    }
+
+    private List<InlineKeyboardButton> getButton(String buttonName, String buttonCallBackData) {
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText(buttonName);
+        button.setCallbackData(buttonCallBackData);
+
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(button);
+        return keyboardButtonsRow;
     }
 }

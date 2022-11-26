@@ -33,6 +33,11 @@ public class CallbackQueryHandler {
         String data = buttonQuery.getData();
 
         switch (data) {
+            case ("back_from_waiting_list"):
+                callBackAnswer = keyBoardTemplates.getMainMenuMessage(chatId,
+                        "Воспользуйтесь главным меню", userId);
+                botStateCash.saveBotState(userId, BotState.START);
+                break;
             //первая клавиатура
             case ("first_button"):
                 callBackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSecondKeyBoard());

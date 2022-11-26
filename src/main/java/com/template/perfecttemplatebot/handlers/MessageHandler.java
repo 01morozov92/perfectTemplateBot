@@ -115,10 +115,10 @@ public class MessageHandler {
 //                user.setAmountOfDays(user.getAmountOfDays() + 8);
 //                userDAO.save(user);
                 return answerService.mockHandler(userId);
-            case ("SUB_MENU_1"):
-                return answerService.mockHandler(userId);
+            case ("CHECK_WAITING_ROOM"):
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createWaitingKeyboard());
             case ("SUB_MENU_2"):
-                return answerService.mockHandler(userId, "Все супер ГУД!");
+                return answerService.mockHandler(userId);
             default:
                 throw new IllegalStateException("Unexpected value: " + botState);
         }

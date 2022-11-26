@@ -2,6 +2,7 @@ package com.template.perfecttemplatebot.service;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
+import com.template.perfecttemplatebot.templates.KeyBoard;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class AnswerService {
         this.botStateCash = botStateCash;
     }
 
-    public BotApiMethod<?> drawKeyBoardWithMsg(long userId, KeyBoardTemplates.KeyBoard keyBoard) {
+    public BotApiMethod<?> drawKeyBoardWithMsg(long userId, KeyBoard keyBoard) {
         SendMessage replyMessage = new SendMessage();
         replyMessage.setChatId(String.valueOf(userId));
         replyMessage.setText(keyBoard.getKeyBoardDescription());
