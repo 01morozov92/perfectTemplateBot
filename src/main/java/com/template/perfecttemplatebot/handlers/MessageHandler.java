@@ -52,7 +52,7 @@ public class MessageHandler {
             case ("LIST_OF_ALL_SUBSCRIPTIONS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 StringBuilder stringBuilder = new StringBuilder();
-                userDAO.findAllUsers().forEach(user -> stringBuilder.append(user.getName()).append("\n"));
+                userDAO.findAllUsers().forEach(user -> stringBuilder.append(user.getTelegramTag()).append("\n"));
                 return SendMessage.builder()
                         .text(stringBuilder.toString())
                         .chatId(String.valueOf(chatId))
