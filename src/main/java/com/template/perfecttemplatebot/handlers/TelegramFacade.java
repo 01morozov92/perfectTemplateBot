@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -62,12 +61,15 @@ public class TelegramFacade {
             case "Списать тренировку":
                 botState = BotState.REMOVE_ONE_DAY;
                 break;
+            case "Добавить тренировку":
+                botState = BotState.ADD_ONE_DAY;
+                break;
             case "Меню3":
                 botState = BotState.MENU_3;
                 break;
             case "Все подписки":
                 if (message.getFrom().getId() == adminId)
-                    botState = BotState.LIST_OF_ALL_SUBSCRIPTIONS;
+                    botState = BotState.ALL_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
             case "Действующие подписки":

@@ -13,10 +13,13 @@ import java.util.Map;
 @Getter
 //Used to save state bot.
 public class BotStateCash {
+
+    private BotState lastBotState;
     private final Map<Long, BotState> botStateMap = new HashMap<>();
 
     public BotState saveBotState(long userId, BotState botState) {
         botStateMap.put(userId, botState);
+        lastBotState = botState;
         return botStateMap.get(userId);
     }
 }

@@ -48,12 +48,12 @@ public class UserDAO {
         userRepository.save(user);
     }
 
-    public SendMessage saveUser(Message message, long userId, SendMessage sendMessage, String firstName, String lastName, Boolean subscriber) {
+    public SendMessage saveUser(Message message, long userId, SendMessage sendMessage, String lastName, String firstName, Boolean subscriber) {
         String userName = message.getFrom().getUserName();
         User user = findByTelegramId(userId);
         user.setSubscriber(subscriber);
-        user.setFirstName(firstName);
         user.setLastName(lastName);
+        user.setFirstName(firstName);
         user.setTelegramId(userId);
         user.setTelegramTag("@" + userName);
         user.setAmountOfDays(0);

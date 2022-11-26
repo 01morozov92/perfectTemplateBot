@@ -23,7 +23,10 @@ public class CallbackQueryHandler {
     private final KeyBoardTemplates keyBoardTemplates;
     private final AnswerService answerService;
     private final UserDAO userDAO;
+    private final Pattern authPattern = Pattern.compile("^@[_a-zA-Z]+$");
+    private Matcher matcher;
 
+    private BotApiMethod<?> callbackAnswer;
     private User user;
 
     @Autowired
@@ -39,7 +42,6 @@ public class CallbackQueryHandler {
         final long chatId = buttonQuery.getMessage().getChatId();
         final long userId = buttonQuery.getFrom().getId();
 
-        BotApiMethod<?> callbackAnswer = null;
 
         String data = buttonQuery.getData();
 
@@ -97,8 +99,48 @@ public class CallbackQueryHandler {
                 botStateCash.saveBotState(userId, BotState.START);
                 break;
             default:
-                Pattern authPattern = Pattern.compile("^@[_a-zA-Z]+$");
-                Matcher matcher = authPattern.matcher(data);
+                callbackAnswer = handleDynamicCallbacks(userId, data);
+        }
+        return callbackAnswer;
+    }
+
+    private BotApiMethod<?> handleDynamicCallbacks(long userId, String data) {
+        switch (botStateCash.getLastBotState()) {
+            case ADD_ONE_DAY:
+                matcher = authPattern.matcher(data);
+                if (matcher.find()) {
+                    user = userDAO.findByTelegramTag(data);
+                    botStateCash.saveBotState(userId, BotState.ADD_ONE_DAY);
+                    int amountOfDays = user.getAmountOfDays();
+                    user.setAmountOfDays(amountOfDays + 1);
+                    userDAO.save(user);
+                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard());
+                } else {
+                    callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
+                    botStateCash.saveBotState(userId, BotState.START);
+                }
+                break;
+            case REMOVE_ONE_DAY:
+                matcher = authPattern.matcher(data);
+                if (matcher.find()) {
+                    user = userDAO.findByTelegramTag(data);
+                    botStateCash.saveBotState(userId, BotState.REMOVE_ONE_DAY);
+                    int amountOfDays = user.getAmountOfDays();
+                    if (amountOfDays > 0) {
+                        user.setAmountOfDays(amountOfDays - 1);
+                        userDAO.save(user);
+                    } else {
+                        answerService.sendTextRightNow(userId, "У участника: " + data + " уже закончились оплаченные тренировки");
+                    }
+                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard());
+                } else {
+                    callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
+                    botStateCash.saveBotState(userId, BotState.START);
+                }
+                break;
+            case CHECK_WAITING_ROOM:
+            case RENEW_SUBSCRIPTION:
+                matcher = authPattern.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     botStateCash.saveBotState(userId, BotState.SET_DAYS);
@@ -107,6 +149,7 @@ public class CallbackQueryHandler {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
                 }
+                break;
         }
         return callbackAnswer;
     }

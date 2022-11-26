@@ -58,19 +58,13 @@ public class KeyBoardTemplates {
         replyKeyboardMarkup.setOneTimeKeyboard(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
-
-        KeyboardRow row1 = new KeyboardRow();
-        KeyboardRow row2 = new KeyboardRow();
-        row1.add(new KeyboardButton("Осталось тренировок"));
-        row2.add((new KeyboardButton("Меню3")));
-        keyboard.add(row1);
-        keyboard.add(row2);
         if (userId == admin_id) {
             KeyboardRow row3 = new KeyboardRow();
             KeyboardRow row4 = new KeyboardRow();
             KeyboardRow row5 = new KeyboardRow();
             KeyboardRow row6 = new KeyboardRow();
             row3.add(new KeyboardButton("Списать тренировку"));
+            row3.add(new KeyboardButton("Добавить тренировку"));
             row4.add(new KeyboardButton("Все подписки"));
             row4.add(new KeyboardButton("Действующие подписки"));
             row5.add(new KeyboardButton("Истекающие подписки"));
@@ -81,6 +75,13 @@ public class KeyBoardTemplates {
             keyboard.add(row4);
             keyboard.add(row5);
             keyboard.add(row6);
+        } else {
+            KeyboardRow row1 = new KeyboardRow();
+            KeyboardRow row2 = new KeyboardRow();
+            row1.add(new KeyboardButton("Осталось тренировок"));
+            row2.add((new KeyboardButton("Расписание тренировок")));
+            keyboard.add(row1);
+            keyboard.add(row2);
         }
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
@@ -184,12 +185,38 @@ public class KeyBoardTemplates {
         return new KeyBoard(inlineKeyboardMarkup, "Это третья клавиатура");
     }
 
-    public KeyBoard createSubscriptionKeyboard(boolean withSubscription) {
+    public KeyBoard getWaitingKeyboard() {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        List<User> users = userDAO.findAllBySubscriber(withSubscription);
+        List<User> users = userDAO.findAllBySubscriber(false);
         for (User user : users) {
             rowList.add(getButton(
                     String.format("%s %s", user.getFirstName(), user.getLastName()),
+                    user.getTelegramTag()
+            ));
+        }
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        if (rowList.isEmpty()) {
+            rowList.add(getButton(
+                    "Назад",
+                    "back_from_waiting_list"
+            ));
+            inlineKeyboardMarkup.setKeyboard(rowList);
+            return new KeyBoard(inlineKeyboardMarkup, "Нет пользователей в ожидании");
+        }
+        rowList.add(getButton(
+                "Назад",
+                "back_from_waiting_list"
+        ));
+        inlineKeyboardMarkup.setKeyboard(rowList);
+        return new KeyBoard(inlineKeyboardMarkup, "Список ожидающих пользователей");
+    }
+
+    public KeyBoard getSubscriptionKeyboard() {
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        List<User> users = userDAO.findAllBySubscriber(true);
+        for (User user : users) {
+            rowList.add(getButton(
+                    String.format("%s %s %s", userDAO.findByTelegramTag(user.getTelegramTag()).getAmountOfDays(), user.getFirstName(), user.getLastName()),
                     user.getTelegramTag()
             ));
         }

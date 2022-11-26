@@ -2,6 +2,7 @@ package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
+import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
 import com.template.perfecttemplatebot.service.AnswerService;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
@@ -10,8 +11,11 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Component
 public class MessageHandler {
@@ -30,6 +34,7 @@ public class MessageHandler {
 
     //обрабатывает апдейт в зависимости от назначенного ранее состояния бота
     public BotApiMethod<?> handle(Message message, BotState botState) {
+        List<User> users;
         long userId = message.getFrom().getId();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(userId));
@@ -89,34 +94,60 @@ public class MessageHandler {
             case ("AMOUNT_OF_DAYS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 return answerService.sendText(userId, "У вас осталось " + userDAO.findByTelegramId(userId).getAmountOfDays().toString() + " неиспользованных тренировок");
-            case ("REMOVE_ONE_DAY"):
-                return answerService.mockHandler(userId);
             case ("MENU_3"):
                 return answerService.mockHandler(userId);
-            case ("LIST_OF_ALL_SUBSCRIPTIONS"):
+            case ("ALL_SUBSCRIPTIONS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 StringBuilder stringBuilder = new StringBuilder();
-                userDAO.findAllUsers().forEach(user -> stringBuilder.append(user.getTelegramTag()).append("\n"));
+                userDAO.findAllUsers().forEach(user -> {
+                    stringBuilder.append(user.getLastName()).append(" ");
+                    stringBuilder.append(user.getFirstName()).append(" ");
+                    stringBuilder.append(user.getTelegramTag()).append(" ");
+                    stringBuilder.append("Осталось тренировок: ").append(user.getAmountOfDays()).append("\n");
+                });
                 return SendMessage.builder()
                         .text(stringBuilder.toString())
                         .chatId(String.valueOf(userId))
                         .build();
             case ("LIST_OF_PAYED_SUBSCRIPTIONS"):
-                return answerService.mockHandler(userId);
+                botStateCash.saveBotState(userId, BotState.START);
+                users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() > 0).collect(Collectors.toList());
+                return printSubscriptions(users, userId);
             case ("LIST_OF_EXPIRING_SUBSCRIPTIONS"):
-                return answerService.mockHandler(userId);
+                botStateCash.saveBotState(userId, BotState.START);
+                users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() <= 2).collect(Collectors.toList());
+                return printSubscriptions(users, userId);
             case ("LIST_OF_EXPIRED_SUBSCRIPTIONS"):
-                return answerService.mockHandler(userId);
+                botStateCash.saveBotState(userId, BotState.START);
+                users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() == 0).collect(Collectors.toList());
+                return printSubscriptions(users, userId);
+            case ("ADD_ONE_DAY"):
+            case ("REMOVE_ONE_DAY"):
             case ("RENEW_SUBSCRIPTION"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createSubscriptionKeyboard(true));
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard());
             case ("CHECK_WAITING_ROOM"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createSubscriptionKeyboard(false));
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getWaitingKeyboard());
             case ("SET_DAYS"):
                 return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyBoard());
             case ("SUB_MENU_2"):
                 return answerService.mockHandler(userId);
             default:
                 throw new IllegalStateException("Unexpected value: " + botState);
+        }
+    }
+
+    private BotApiMethod<? extends Serializable> printSubscriptions(List<User> users, long userId) {
+        if (!users.isEmpty()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            users.forEach(user -> {
+                stringBuilder.append(user.getLastName()).append(" ");
+                stringBuilder.append(user.getFirstName()).append(" ");
+                stringBuilder.append(user.getTelegramTag()).append(" ");
+                stringBuilder.append("Осталось тренировок: ").append(user.getAmountOfDays()).append("\n");
+            });
+            return answerService.sendText(userId, stringBuilder.toString());
+        }else {
+            return answerService.sendText(userId, "Нет пользователей");
         }
     }
 }
