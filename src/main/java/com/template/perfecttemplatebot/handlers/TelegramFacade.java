@@ -64,29 +64,34 @@ public class TelegramFacade {
             case "Меню3":
                 botState = BotState.MENU_3;
                 break;
-            case "Список всех подписок":
+            case "Все подписки":
                 if (message.getFrom().getId() == adminId)
                 botState = BotState.LIST_OF_ALL_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
-            case "Список действующих подписок":
+            case "Действующие подписки":
                 if (message.getFrom().getId() == adminId)
                 botState = BotState.LIST_OF_PAYED_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
-            case "Список истекающих подписок":
+            case "Истекающие подписки":
                 if (message.getFrom().getId() == adminId)
                     botState = BotState.LIST_OF_EXPIRING_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
-            case "Список просроченных подписок":
+            case "Просроченные подписки":
                 if (message.getFrom().getId() == adminId)
                     botState = BotState.LIST_OF_EXPIRED_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
-            case "Добавить/Продлить подписок":
+            case "Добавить подписку":
                 if (message.getFrom().getId() == adminId)
                     botState = BotState.ADD_NEW_SUBSCRIPTION;
+                else botState = BotState.START;
+                break;
+            case "Продлить подписку":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.RENEW_SUBSCRIPTION;
                 else botState = BotState.START;
                 break;
             default:

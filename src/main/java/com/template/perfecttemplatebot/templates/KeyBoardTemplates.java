@@ -71,18 +71,17 @@ public class KeyBoardTemplates {
             KeyboardRow row4 = new KeyboardRow();
             KeyboardRow row5 = new KeyboardRow();
             KeyboardRow row6 = new KeyboardRow();
-            KeyboardRow row7 = new KeyboardRow();
             row3.add(new KeyboardButton("Списать тренировку"));
-            row4.add(new KeyboardButton("Список всех подписок"));
-            row4.add(new KeyboardButton("Список действующих подписок"));
-            row5.add(new KeyboardButton("Список истекающих подписок"));
-            row6.add(new KeyboardButton("Список просроченных подписок"));
-            row7.add(new KeyboardButton("Добавить/Продлить подписок"));
+            row4.add(new KeyboardButton("Все подписки"));
+            row4.add(new KeyboardButton("Действующие подписки"));
+            row5.add(new KeyboardButton("Истекающие подписки"));
+            row5.add(new KeyboardButton("Просроченные подписки"));
+            row6.add(new KeyboardButton("Добавить подписку"));
+            row6.add(new KeyboardButton("Продлить подписку"));
             keyboard.add(row3);
             keyboard.add(row4);
             keyboard.add(row5);
             keyboard.add(row6);
-            keyboard.add(row7);
         }
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
