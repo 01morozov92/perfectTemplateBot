@@ -62,23 +62,23 @@ public class KeyBoardTemplates {
 
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
-        KeyboardRow row3 = new KeyboardRow();
         row1.add(new KeyboardButton("Осталось тренировок"));
-        row2.add(new KeyboardButton("Списать тренировку"));
-        row3.add((new KeyboardButton("Меню3")));
+        row2.add((new KeyboardButton("Меню3")));
         keyboard.add(row1);
         keyboard.add(row2);
-        keyboard.add(row3);
         if (userId == admin_id) {
+            KeyboardRow row3 = new KeyboardRow();
             KeyboardRow row4 = new KeyboardRow();
             KeyboardRow row5 = new KeyboardRow();
             KeyboardRow row6 = new KeyboardRow();
             KeyboardRow row7 = new KeyboardRow();
-            row4.add(new KeyboardButton("Список всех оплат"));
-            row4.add(new KeyboardButton("Список оплативших"));
-            row5.add(new KeyboardButton("Список истекающих оплат"));
-            row6.add(new KeyboardButton("Список просроченных оплат"));
-            row7.add(new KeyboardButton("Добавить/Продлить оплату"));
+            row3.add(new KeyboardButton("Списать тренировку"));
+            row4.add(new KeyboardButton("Список всех подписок"));
+            row4.add(new KeyboardButton("Список действующих подписок"));
+            row5.add(new KeyboardButton("Список истекающих подписок"));
+            row6.add(new KeyboardButton("Список просроченных подписок"));
+            row7.add(new KeyboardButton("Добавить/Продлить подписок"));
+            keyboard.add(row3);
             keyboard.add(row4);
             keyboard.add(row5);
             keyboard.add(row6);
