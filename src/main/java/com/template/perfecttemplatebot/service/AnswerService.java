@@ -1,13 +1,17 @@
 package com.template.perfecttemplatebot.service;
 
+import com.template.perfecttemplatebot.bot.TelegramBot;
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.templates.KeyBoard;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import static com.template.perfecttemplatebot.app_config.ApplicationContextProvider.getApplicationContext;
 
 @Component
 public class AnswerService {
@@ -47,5 +51,11 @@ public class AnswerService {
         replyMessage.setChatId(String.valueOf(userId));
         replyMessage.setText(msg);
         return replyMessage;
+    }
+
+    @SneakyThrows
+    public void sendTextRightNow(long userId, String text) {
+        TelegramBot bot = (TelegramBot) getApplicationContext().getAutowireCapableBeanFactory().getBean("springWebhookBot");
+        bot.execute(sendText(userId, text));
     }
 }

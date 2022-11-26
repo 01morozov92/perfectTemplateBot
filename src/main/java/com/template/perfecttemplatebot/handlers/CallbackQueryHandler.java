@@ -1,11 +1,13 @@
 package com.template.perfecttemplatebot.handlers;
 
+import com.template.perfecttemplatebot.bot.TelegramBot;
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
 import com.template.perfecttemplatebot.service.AnswerService;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -14,6 +16,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.template.perfecttemplatebot.app_config.ApplicationContextProvider.getApplicationContext;
 
 @Component
 //processes incoming callback's
@@ -31,6 +35,7 @@ public class CallbackQueryHandler {
         this.userDAO = userDAO;
     }
 
+    @SneakyThrows
     public BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
         final long chatId = buttonQuery.getMessage().getChatId();
         final long userId = buttonQuery.getFrom().getId();
@@ -94,7 +99,13 @@ public class CallbackQueryHandler {
                 if (matcher.find()) {
                     User user = userDAO.findByTelegramTag(data);
                     user.setSubscriber(true);
+                    userDAO.save(user);
                     callBackAnswer = answerService.sendText(user.getTelegramId(), "Ваша заявка подтверждена, теперь вы можете пользоваться ботом");
+                    if (userDAO.findByTelegramTag(data).getSubscriber()) {
+                        answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена");
+                    } else {
+                        answerService.sendTextRightNow(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
+                    }
                     botStateCash.saveBotState(userId, BotState.START);
                 } else {
                     callBackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
