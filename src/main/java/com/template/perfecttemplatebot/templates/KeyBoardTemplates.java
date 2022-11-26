@@ -2,14 +2,12 @@ package com.template.perfecttemplatebot.templates;
 
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.data_base.entity.User;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -72,20 +70,17 @@ public class KeyBoardTemplates {
             KeyboardRow row4 = new KeyboardRow();
             KeyboardRow row5 = new KeyboardRow();
             KeyboardRow row6 = new KeyboardRow();
-            KeyboardRow row7 = new KeyboardRow();
             row3.add(new KeyboardButton("Списать тренировку"));
             row4.add(new KeyboardButton("Все подписки"));
             row4.add(new KeyboardButton("Действующие подписки"));
             row5.add(new KeyboardButton("Истекающие подписки"));
             row5.add(new KeyboardButton("Просроченные подписки"));
-            row6.add(new KeyboardButton("Добавить подписку"));
             row6.add(new KeyboardButton("Продлить подписку"));
-            row7.add(new KeyboardButton("Ожидающие подтверждения"));
+            row6.add(new KeyboardButton("Ожидающие подтверждения"));
             keyboard.add(row3);
             keyboard.add(row4);
             keyboard.add(row5);
             keyboard.add(row6);
-            keyboard.add(row7);
         }
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
@@ -189,9 +184,9 @@ public class KeyBoardTemplates {
         return new KeyBoard(inlineKeyboardMarkup, "Это третья клавиатура");
     }
 
-    public KeyBoard createWaitingKeyboard() {
+    public KeyBoard createSubscriptionKeyboard(boolean withSubscription) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        List<User> users = userDAO.findAllBySubscriber(false);
+        List<User> users = userDAO.findAllBySubscriber(withSubscription);
         for (User user : users) {
             rowList.add(getButton(
                     String.format("%s %s", user.getFirstName(), user.getLastName()),
@@ -205,14 +200,14 @@ public class KeyBoardTemplates {
                     "back_from_waiting_list"
             ));
             inlineKeyboardMarkup.setKeyboard(rowList);
-            return new KeyBoard(inlineKeyboardMarkup, "Нет ожидающих подтверждения");
+            return new KeyBoard(inlineKeyboardMarkup, "Нет пользователей");
         }
         rowList.add(getButton(
                 "Назад",
                 "back_from_waiting_list"
         ));
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return new KeyBoard(inlineKeyboardMarkup, "Ожидающие подтверждения");
+        return new KeyBoard(inlineKeyboardMarkup, "Список пользователей");
     }
 
     private List<InlineKeyboardButton> getButton(String buttonName, String buttonCallBackData) {

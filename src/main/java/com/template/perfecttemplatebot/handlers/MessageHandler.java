@@ -107,15 +107,10 @@ public class MessageHandler {
                 return answerService.mockHandler(userId);
             case ("LIST_OF_EXPIRED_SUBSCRIPTIONS"):
                 return answerService.mockHandler(userId);
-            case ("ADD_NEW_SUBSCRIPTION"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createWaitingKeyboard());
             case ("RENEW_SUBSCRIPTION"):
-//                User user = userDAO.findByUserId(userId);
-//                user.setAmountOfDays(user.getAmountOfDays() + 8);
-//                userDAO.save(user);
-                return answerService.mockHandler(userId);
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createSubscriptionKeyboard(true));
             case ("CHECK_WAITING_ROOM"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createWaitingKeyboard());
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createSubscriptionKeyboard(false));
             case ("SET_DAYS"):
                 return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyBoard());
             case ("SUB_MENU_2"):

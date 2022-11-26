@@ -85,11 +85,6 @@ public class TelegramFacade {
                     botState = BotState.LIST_OF_EXPIRED_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
-            case "Добавить подписку":
-                if (message.getFrom().getId() == adminId)
-                    botState = BotState.ADD_NEW_SUBSCRIPTION;
-                else botState = BotState.START;
-                break;
             case "Продлить подписку":
                 if (message.getFrom().getId() == adminId)
                     botState = BotState.RENEW_SUBSCRIPTION;

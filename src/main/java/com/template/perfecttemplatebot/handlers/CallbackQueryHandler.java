@@ -116,7 +116,7 @@ public class CallbackQueryHandler {
         userDAO.save(user);
         if (userDAO.findByTelegramTag(user.getTelegramTag()).getSubscriber()) {
             callBackAnswer = keyBoardTemplates.getMainMenuMessage(
-                    "Ваша заявка подтверждена, вы оплатили " + user.getAmountOfDays() + " тренировок и теперь вы можете пользоваться ботом ", user.getTelegramId());
+                    "Ваша заявка подтверждена, вы оплатили " + user.getAmountOfDays() + " тренировок", user.getTelegramId());
             answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + user.getAmountOfDays() + " тренировок");
         } else {
             answerService.sendTextRightNow(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
