@@ -14,18 +14,18 @@
 //        InlineKeyboardMarkup inlineKeyboardMarkup = getInlineMessageButtons(prefix, isUserDictionaryNeed);
 //        inlineKeyboardMarkup.getKeyboard().add(getButton(
 //                "Шаблон",
-//                prefix + CallbackDataPartsEnum.TEMPLATE.name()
+//                "callback"
 //        ));
 //        return inlineKeyboardMarkup;
 //    }
 //
-//    public InlineKeyboardMarkup getInlineMessageButtons(String prefix, boolean isUserDictionaryNeed) {
+//    public InlineKeyboardMarkup getInlineMessageButtons(String prefix) {
 //        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
 //
 //        for (DictionaryResourcePathEnum dictionary : DictionaryResourcePathEnum.values()) {
 //            rowList.add(getButton(
-//                    dictionary.getButtonName(),
-//                    prefix + dictionary.name()
+//                    "",
+//                    "callback"
 //            ));
 //        }
 //

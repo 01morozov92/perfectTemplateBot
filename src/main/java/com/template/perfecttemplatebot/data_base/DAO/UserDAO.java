@@ -3,7 +3,6 @@ package com.template.perfecttemplatebot.data_base.DAO;
 import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.data_base.repo.UserRepository;
-import com.template.perfecttemplatebot.enums.BotState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -22,8 +21,12 @@ public class UserDAO {
         this.userRepository = userRepository;
     }
 
-    public User findByUserId(long id) {
+    public User findByUserId(int id) {
         return userRepository.findById(id);
+    }
+
+    public User findByTelegramId(long id) {
+        return userRepository.findByTelegramId(id);
     }
 
     public List<User> findAllUsers() {
@@ -39,20 +42,42 @@ public class UserDAO {
         userRepository.save(user);
     }
 
-    public SendMessage saveNewUser(Message message, long userId, SendMessage sendMessage) {
+    public SendMessage saveUser(Message message, long userId, SendMessage sendMessage, String firstName, String lastName, Boolean subscriber) {
         String userName = message.getFrom().getUserName();
-        User user = new User();
-        user.setId(userId);
+        User user = findByTelegramId(userId);
+        user.setSubscriber(subscriber);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setTelegramId(userId);
         user.setTelegramTag("@" + userName);
         user.setAmountOfDays(0);
         this.save(user);
         sendMessage.setText("");
-        botStateCash.saveBotState(userId, BotState.START);
+        return sendMessage;
+    }
+
+    public SendMessage addNewUser(Message message, long userId, SendMessage sendMessage) {
+        User user = new User();
+        user.setTelegramId(userId);
+        user.setTelegramTag("@" + message.getFrom().getUserName());
+        user.setSubscriber(false);
+        sendMessage.setText("");
+        this.save(user);
         return sendMessage;
     }
 
     public boolean isExist(long id) {
-        User user = findByUserId(id);
+        User user = findByTelegramId(id);
         return user != null;
+    }
+
+    public boolean isSubscriber(long id) {
+        User user = findByTelegramId(id);
+        return user.getSubscriber().equals(true);
+    }
+
+    public boolean hasName(long id) {
+        User user = findByTelegramId(id);
+        return user.getFirstName() != null & user.getFirstName() != null;
     }
 }

@@ -8,10 +8,15 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: bigint
+                  type: int
                   constraints:
                     primaryKey: true
                     nullable: false
+              - column:
+                  name: telegram_id
+                  type: bigint
+                  constraints:
+                    nullable: true
               - column:
                   name: telegram_tag
                   type: varchar(200)
@@ -21,7 +26,7 @@ databaseChangeLog:
                   name: amount_of_days
                   type: int
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: first_name
                   type: varchar(200)
@@ -32,3 +37,15 @@ databaseChangeLog:
                   type: varchar(200)
                   constraints:
                     nullable: true
+              - column:
+                  name: subscriber
+                  type: boolean
+                  constraints:
+                    nullable: true
+        - addAutoIncrement:
+              columnName: id
+              type: int
+              generationType: ALWAYS
+              incrementBy: 1
+              startWith: 1
+              tableName: users

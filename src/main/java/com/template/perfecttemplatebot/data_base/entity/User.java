@@ -13,8 +13,12 @@ import javax.persistence.*;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private int id;
+
+    @Column(name = "telegram_id")
+    private Long telegramId;
 
     @Column(name = "telegram_tag")
     private String telegramTag;
@@ -27,6 +31,9 @@ public class User {
 
     @Column(name = "amount_of_days")
     private Integer amountOfDays;
+
+    @Column(name = "subscriber")
+    private Boolean subscriber;
 
     public User() {
     }

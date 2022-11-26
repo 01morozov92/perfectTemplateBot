@@ -1,6 +1,9 @@
 package com.template.perfecttemplatebot.enums;
 
 public enum BotState {
+    ENTRANCE,
+    AUTH,
+    WAITING_ROOM,
     START,
     AMOUNT_OF_DAYS,
     REMOVE_ONE_DAY,

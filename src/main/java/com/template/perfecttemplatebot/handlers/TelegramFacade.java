@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,9 +16,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TelegramFacade {
 
-     final MessageHandler messageHandler;
-     final CallbackQueryHandler callbackQueryHandler;
-     final BotStateCash botStateCash;
+    final MessageHandler messageHandler;
+    final CallbackQueryHandler callbackQueryHandler;
+    final BotStateCash botStateCash;
 
     @Value("${telegrambot.adminId}")
     int adminId;
@@ -66,12 +67,12 @@ public class TelegramFacade {
                 break;
             case "Все подписки":
                 if (message.getFrom().getId() == adminId)
-                botState = BotState.LIST_OF_ALL_SUBSCRIPTIONS;
+                    botState = BotState.LIST_OF_ALL_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
             case "Действующие подписки":
                 if (message.getFrom().getId() == adminId)
-                botState = BotState.LIST_OF_PAYED_SUBSCRIPTIONS;
+                    botState = BotState.LIST_OF_PAYED_SUBSCRIPTIONS;
                 else botState = BotState.START;
                 break;
             case "Истекающие подписки":
@@ -88,6 +89,11 @@ public class TelegramFacade {
                 if (message.getFrom().getId() == adminId)
                     botState = BotState.ADD_NEW_SUBSCRIPTION;
                 else botState = BotState.START;
+                SendMessage.builder()
+                        .text("Введите имя нового участника и кол-во оплаченных им тренировок в формате: \n" +
+                                "Иван Иванов @megaIvan 8")
+                        .chatId(String.valueOf(message.getFrom().getId()))
+                        .build();
                 break;
             case "Продлить подписку":
                 if (message.getFrom().getId() == adminId)
@@ -95,8 +101,8 @@ public class TelegramFacade {
                 else botState = BotState.START;
                 break;
             default:
-                botState = botStateCash.getBotStateMap().get(message.getFrom().getId()) == null?
-                        BotState.START: botStateCash.getBotStateMap().get(message.getFrom().getId());
+                botState = botStateCash.getBotStateMap().get(message.getFrom().getId()) == null ?
+                        BotState.START : botStateCash.getBotStateMap().get(message.getFrom().getId());
         }
         //we pass the corresponding state to the handler
         //the corresponding method will be called
