@@ -15,7 +15,8 @@ import java.util.Map;
 public class BotStateCash {
     private final Map<Long, BotState> botStateMap = new HashMap<>();
 
-    public void saveBotState(long userId, BotState botState) {
+    public BotState saveBotState(long userId, BotState botState) {
         botStateMap.put(userId, botState);
+        return botStateMap.get(userId);
     }
 }

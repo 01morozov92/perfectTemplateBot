@@ -34,26 +34,24 @@ public class MessageHandler {
         long chatId = message.getChatId();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
-        botStateCash.saveBotState(userId, botState);
         //Если новый пользователь
         if (!userDAO.isExist(userId)) {
             userDAO.addNewUser(message, userId, sendMessage);
-            botStateCash.saveBotState(userId, BotState.ENTRANCE);
+            botState = botStateCash.saveBotState(userId, BotState.ENTRANCE);
         } else { //Если пользователь уже существует
             //Пользователь уже оплатил подписку
             if (userDAO.isSubscriber(userId)) {
-                botStateCash.saveBotState(userId, BotState.START);
+                botStateCash.saveBotState(userId, botState);
             } else { //Пользователь не оплатил подписку
                 //Пользователь уже представился
                 if (userDAO.hasName(userId)) {
-                    botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
+                    botState = botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
                 } else { //Пользователь еще не представился
-                    botStateCash.saveBotState(userId, BotState.AUTH);
+                    botState = botStateCash.saveBotState(userId, BotState.AUTH);
                 }
             }
         }
         //save state in to cache
-        botState = botStateCash.getBotStateMap().get(userId);
         switch (botState.name()) {
             case ("ENTRANCE"):
                 if (userId == keyBoardTemplates.getAdmin_id()) {
@@ -72,10 +70,13 @@ public class MessageHandler {
                     //Пользователь является админом
                     if (userId == keyBoardTemplates.getAdmin_id()) {
                         botStateCash.saveBotState(userId, BotState.START);
-                        return userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], true);
+                        userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], true);
+                        return keyBoardTemplates.getMainMenuMessage(message.getChatId(),
+                                "Воспользуйтесь главным меню", userId);
                     } else { //Пользователь не админ
                         botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
-                        return userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], false);
+                        userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], false);
+                        return answerService.sendText(userId, "Необходимо подтверждение администратора. Можете написать ему в telegram @morozilya");
                     }
                 } else {//Пользователь представился неправильно
                     return answerService.sendText(userId,
