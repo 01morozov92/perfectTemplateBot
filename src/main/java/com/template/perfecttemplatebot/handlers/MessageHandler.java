@@ -31,9 +31,8 @@ public class MessageHandler {
     //обрабатывает апдейт в зависимости от назначенного ранее состояния бота
     public BotApiMethod<?> handle(Message message, BotState botState) {
         long userId = message.getFrom().getId();
-        long chatId = message.getChatId();
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(String.valueOf(chatId));
+        sendMessage.setChatId(String.valueOf(userId));
         //Если новый пользователь
         if (!userDAO.isExist(userId)) {
             userDAO.addNewUser(message, userId, sendMessage);
@@ -71,7 +70,7 @@ public class MessageHandler {
                     if (userId == keyBoardTemplates.getAdmin_id()) {
                         botStateCash.saveBotState(userId, BotState.START);
                         userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], true);
-                        return keyBoardTemplates.getMainMenuMessage(message.getChatId(),
+                        return keyBoardTemplates.getMainMenuMessage(
                                 "Воспользуйтесь главным меню", userId);
                     } else { //Пользователь не админ
                         botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
@@ -85,11 +84,11 @@ public class MessageHandler {
             case ("WAITING_ROOM"):
                 return answerService.sendText(userId, "Необходимо подтверждение администратора. Можете написать ему в telegram @morozilya");
             case ("START"):
-                return keyBoardTemplates.getMainMenuMessage(message.getChatId(),
+                return keyBoardTemplates.getMainMenuMessage(
                         "Воспользуйтесь главным меню", userId);
             case ("AMOUNT_OF_DAYS"):
                 botStateCash.saveBotState(userId, BotState.START);
-                return answerService.sendText(userId, "У вас осталось " + userDAO.findByTelegramId(userId).getAmountOfDays().toString() + " не использованных тренировок");
+                return answerService.sendText(userId, "У вас осталось " + userDAO.findByTelegramId(userId).getAmountOfDays().toString() + " неиспользованных тренировок");
             case ("REMOVE_ONE_DAY"):
                 return answerService.mockHandler(userId);
             case ("MENU_3"):
@@ -100,7 +99,7 @@ public class MessageHandler {
                 userDAO.findAllUsers().forEach(user -> stringBuilder.append(user.getTelegramTag()).append("\n"));
                 return SendMessage.builder()
                         .text(stringBuilder.toString())
-                        .chatId(String.valueOf(chatId))
+                        .chatId(String.valueOf(userId))
                         .build();
             case ("LIST_OF_PAYED_SUBSCRIPTIONS"):
                 return answerService.mockHandler(userId);
@@ -117,6 +116,8 @@ public class MessageHandler {
                 return answerService.mockHandler(userId);
             case ("CHECK_WAITING_ROOM"):
                 return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createWaitingKeyboard());
+            case ("SET_DAYS"):
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyBoard());
             case ("SUB_MENU_2"):
                 return answerService.mockHandler(userId);
             default:

@@ -45,10 +45,10 @@ public class KeyBoardTemplates {
         return sendMessage;
     }
 
-    public SendMessage getMainMenuMessage(final long chatId, final String textMessage, final long userId) {
+    public SendMessage getMainMenuMessage(final String textMessage, final long userId) {
         final ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(userId);
 
-        return createMessageWithKeyboard(chatId, textMessage, replyKeyboardMarkup);
+        return createMessageWithKeyboard(userId, textMessage, replyKeyboardMarkup);
     }
 
     //Main menu
@@ -91,22 +91,22 @@ public class KeyBoardTemplates {
         return replyKeyboardMarkup;
     }
 
-    public KeyBoard getFirstKeyBoard() {
+    public KeyBoard getAmountOfDaysKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtn = new InlineKeyboardButton();
-        firstBtn.setText("Первая кнопка");
+        firstBtn.setText("8");
         InlineKeyboardButton secondBtn = new InlineKeyboardButton();
-        secondBtn.setText("Вторая кнопка");
+        secondBtn.setText("16");
         InlineKeyboardButton thirdBtn = new InlineKeyboardButton();
-        thirdBtn.setText("Третья кнопка");
+        thirdBtn.setText("24");
         InlineKeyboardButton fourthBtn = new InlineKeyboardButton();
-        fourthBtn.setText("Четвертая кнопка");
+        fourthBtn.setText("32");
 
-        firstBtn.setCallbackData("first_button");
-        secondBtn.setCallbackData("second_button");
-        thirdBtn.setCallbackData("third_button");
-        fourthBtn.setCallbackData("fourth_button");
+        firstBtn.setCallbackData("8");
+        secondBtn.setCallbackData("16");
+        thirdBtn.setCallbackData("24");
+        fourthBtn.setCallbackData("32");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         keyboardButtonsRow1.add(firstBtn);
@@ -119,7 +119,7 @@ public class KeyBoardTemplates {
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return new KeyBoard(inlineKeyboardMarkup, "Это первая клавиатура");
+        return new KeyBoard(inlineKeyboardMarkup, "Выберите количество оплаченных тренировок");
     }
 
     //set calbackquery keyboard for push edit
@@ -200,6 +200,10 @@ public class KeyBoardTemplates {
         }
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         if (rowList.isEmpty()) {
+            rowList.add(getButton(
+                    "Назад",
+                    "back_from_waiting_list"
+            ));
             inlineKeyboardMarkup.setKeyboard(rowList);
             return new KeyBoard(inlineKeyboardMarkup, "Нет ожидающих подтверждения");
         }
