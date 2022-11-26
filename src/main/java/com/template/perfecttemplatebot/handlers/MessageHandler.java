@@ -88,7 +88,8 @@ public class MessageHandler {
                 return keyBoardTemplates.getMainMenuMessage(message.getChatId(),
                         "Воспользуйтесь главным меню", userId);
             case ("AMOUNT_OF_DAYS"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getFirstKeyBoard());
+                botStateCash.saveBotState(userId, BotState.START);
+                return answerService.sendText(userId, "У вас осталось " + userDAO.findByTelegramId(userId).getAmountOfDays().toString() + " не использованных тренировок");
             case ("REMOVE_ONE_DAY"):
                 return answerService.mockHandler(userId);
             case ("MENU_3"):
