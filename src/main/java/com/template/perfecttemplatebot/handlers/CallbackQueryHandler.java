@@ -1,6 +1,8 @@
 package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
+import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
+import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
 import com.template.perfecttemplatebot.service.AnswerService;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
@@ -10,18 +12,23 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
 //processes incoming callback's
 public class CallbackQueryHandler {
     private final BotStateCash botStateCash;
     private final KeyBoardTemplates keyBoardTemplates;
     private final AnswerService answerService;
+    private final UserDAO userDAO;
 
     @Autowired
-    public CallbackQueryHandler(BotStateCash botStateCash, KeyBoardTemplates keyBoardTemplates, AnswerService answerService) {
+    public CallbackQueryHandler(BotStateCash botStateCash, KeyBoardTemplates keyBoardTemplates, AnswerService answerService, UserDAO userDAO) {
         this.botStateCash = botStateCash;
         this.keyBoardTemplates = keyBoardTemplates;
         this.answerService = answerService;
+        this.userDAO = userDAO;
     }
 
     public BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
@@ -81,6 +88,17 @@ public class CallbackQueryHandler {
                 callBackAnswer = new SendMessage(String.valueOf(chatId), "Третья заглушка подменю 2");
                 botStateCash.saveBotState(userId, BotState.START);
                 break;
+            default:
+                Pattern authPattern = Pattern.compile("^@[_a-zA-Z]+$");
+                Matcher matcher = authPattern.matcher(data);
+                if (matcher.find()) {
+                    User user = userDAO.findByTelegramTag(data);
+                    user.setSubscriber(true);
+                    callBackAnswer = answerService.sendText(user.getTelegramId(), "Ваша заявка подтверждена, теперь вы можете пользоваться ботом");
+                    botStateCash.saveBotState(userId, BotState.START);
+                } else {
+                    callBackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
+                }
         }
         return callBackAnswer;
     }

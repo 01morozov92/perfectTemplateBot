@@ -200,13 +200,13 @@ public class KeyBoardTemplates {
         }
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         if (rowList.isEmpty()) {
-            rowList.add(getButton(
-                    "Назад",
-                    "back_from_waiting_list"
-            ));
             inlineKeyboardMarkup.setKeyboard(rowList);
             return new KeyBoard(inlineKeyboardMarkup, "Нет ожидающих подтверждения");
         }
+        rowList.add(getButton(
+                "Назад",
+                "back_from_waiting_list"
+        ));
         inlineKeyboardMarkup.setKeyboard(rowList);
         return new KeyBoard(inlineKeyboardMarkup, "Ожидающие подтверждения");
     }

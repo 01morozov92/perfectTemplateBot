@@ -109,7 +109,7 @@ public class MessageHandler {
             case ("LIST_OF_EXPIRED_SUBSCRIPTIONS"):
                 return answerService.mockHandler(userId);
             case ("ADD_NEW_SUBSCRIPTION"):
-                return answerService.mockHandler(userId);
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.createWaitingKeyboard());
             case ("RENEW_SUBSCRIPTION"):
 //                User user = userDAO.findByUserId(userId);
 //                user.setAmountOfDays(user.getAmountOfDays() + 8);

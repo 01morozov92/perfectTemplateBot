@@ -28,6 +28,9 @@ public class UserDAO {
     public User findByTelegramId(long id) {
         return userRepository.findByTelegramId(id);
     }
+    public User findByTelegramTag(String telegramTag) {
+        return userRepository.findByTelegramTag(telegramTag);
+    }
     public List<User> findAllBySubscriber(Boolean subscription) {
         return userRepository.findAllBySubscriber(subscription);
     }
