@@ -190,7 +190,7 @@ public class KeyBoardTemplates {
         List<User> users = userDAO.findAllBySubscriber(false);
         for (User user : users) {
             rowList.add(getButton(
-                    String.format("%s %s", user.getFirstName(), user.getLastName()),
+                    "%s %s".formatted(user.getFirstName(), user.getLastName()),
                     user.getTelegramTag()
             ));
         }
@@ -216,7 +216,7 @@ public class KeyBoardTemplates {
         List<User> users = userDAO.findAllBySubscriber(true);
         for (User user : users) {
             rowList.add(getButton(
-                    String.format("%s %s %s", userDAO.findByTelegramTag(user.getTelegramTag()).getAmountOfDays(), user.getFirstName(), user.getLastName()),
+                    "%s %s %s".formatted(userDAO.findByTelegramTag(user.getTelegramTag()).getAmountOfDays(), user.getFirstName(), user.getLastName()),
                     user.getTelegramTag()
             ));
         }
