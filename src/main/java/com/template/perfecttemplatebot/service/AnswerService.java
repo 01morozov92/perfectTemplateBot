@@ -6,6 +6,10 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+
+import java.util.List;
 
 import static com.template.perfecttemplatebot.app_config.ApplicationContextProvider.getApplicationContext;
 
@@ -45,5 +49,20 @@ public class AnswerService {
     public void sendTextRightNow(long userId, String text) {
         TelegramBot bot = (TelegramBot) getApplicationContext().getAutowireCapableBeanFactory().getBean("springWebhookBot");
         bot.execute(sendText(userId, text));
+    }
+
+    @SneakyThrows
+    public void deleteAllMessages(long userId, List<Message> messages) {
+        TelegramBot bot = (TelegramBot) getApplicationContext().getAutowireCapableBeanFactory().getBean("springWebhookBot");
+        if (messages != null) {
+            if (!messages.isEmpty()) {
+                for (Message message : messages) {
+                    bot.execute(DeleteMessage.builder()
+                            .chatId(userId)
+                            .messageId(message.getMessageId())
+                            .build());
+                }
+            }
+        }
     }
 }

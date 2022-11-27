@@ -1,6 +1,5 @@
 package com.template.perfecttemplatebot.data_base.DAO;
 
-import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.data_base.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,16 +7,17 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class UserDAO {
-    private final BotStateCash botStateCash;
+
+    private final Comparator<User> comparator = Comparator.comparingInt(User::getId);
     private final UserRepository userRepository;
 
     @Autowired
-    public UserDAO(BotStateCash botStateCash, UserRepository userRepository) {
-        this.botStateCash = botStateCash;
+    public UserDAO( UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -32,11 +32,15 @@ public class UserDAO {
         return userRepository.findByTelegramTag(telegramTag);
     }
     public List<User> findAllBySubscriber(Boolean subscription) {
-        return userRepository.findAllBySubscriber(subscription);
+        List<User> users = userRepository.findAllBySubscriber(subscription);
+        users.sort(comparator);
+        return users;
     }
 
     public List<User> findAllUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        users.sort(comparator);
+        return users;
     }
 
     public void removeUser(User user) {

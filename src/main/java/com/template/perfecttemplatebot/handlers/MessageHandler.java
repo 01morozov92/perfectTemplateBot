@@ -6,6 +6,7 @@ import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
 import com.template.perfecttemplatebot.service.AnswerService;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,7 +25,8 @@ public class MessageHandler {
     private final KeyBoardTemplates keyBoardTemplates;
     private final BotStateCash botStateCash;
     private final AnswerService answerService;
-
+    @Value("${telegrambot.adminId}")
+    int adminId;
     public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, AnswerService answerService) {
         this.userDAO = userDAO;
         this.keyBoardTemplates = keyBoardTemplates;
@@ -32,10 +34,71 @@ public class MessageHandler {
         this.answerService = answerService;
     }
 
-    //обрабатывает апдейт в зависимости от назначенного ранее состояния бота
-    public BotApiMethod<?> handle(Message message, BotState botState) {
-        List<User> users;
+    //обработка текстового сообщения и установка соответствующего состояния бота
+    public BotApiMethod<?> handleInputMessage(Message message) {
         long userId = message.getFrom().getId();
+        BotState botState;
+        String inputMsg = message.getText();
+        //we process messages of the main menu and any other messages
+        //set state
+        switch (inputMsg) {
+            case "/start":
+                botState = BotState.START;
+                break;
+            case "Осталось тренировок":
+                botState = BotState.AMOUNT_OF_DAYS;
+                break;
+            case "Списать тренировку":
+                botState = BotState.REMOVE_ONE_DAY;
+                break;
+            case "Добавить тренировку":
+                botState = BotState.ADD_ONE_DAY;
+                break;
+            case "Меню3":
+                botState = BotState.MENU_3;
+                break;
+            case "Все подписки":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.ALL_SUBSCRIPTIONS;
+                else botState = BotState.START;
+                break;
+            case "Действующие подписки":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.LIST_OF_PAYED_SUBSCRIPTIONS;
+                else botState = BotState.START;
+                break;
+            case "Истекающие подписки":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.LIST_OF_EXPIRING_SUBSCRIPTIONS;
+                else botState = BotState.START;
+                break;
+            case "Просроченные подписки":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.LIST_OF_EXPIRED_SUBSCRIPTIONS;
+                else botState = BotState.START;
+                break;
+            case "Продлить подписку":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.RENEW_SUBSCRIPTION;
+                else botState = BotState.START;
+                break;
+            case "Ожидающие подтверждения":
+                if (message.getFrom().getId() == adminId)
+                    botState = BotState.CHECK_WAITING_ROOM;
+                else botState = BotState.START;
+                break;
+            default:
+                botState = botStateCash.getBotStateMap().get(message.getFrom().getId()) == null ?
+                        BotState.START : botStateCash.getBotStateMap().get(message.getFrom().getId());
+        }
+        //we pass the corresponding state to the handler
+        //the corresponding method will be called
+        return handle(message, botState, userId);
+    }
+
+    //обрабатывает апдейт в зависимости от назначенного ранее состояния бота
+    public BotApiMethod<?> handle(Message message, BotState botState, long userId) {
+        List<User> users;
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(userId));
         //Если новый пользователь
@@ -115,7 +178,7 @@ public class MessageHandler {
                 return printSubscriptions(users, userId);
             case ("LIST_OF_EXPIRING_SUBSCRIPTIONS"):
                 botStateCash.saveBotState(userId, BotState.START);
-                users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() <= 2).collect(Collectors.toList());
+                users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() > 0 & user.getAmountOfDays() <= 2).collect(Collectors.toList());
                 return printSubscriptions(users, userId);
             case ("LIST_OF_EXPIRED_SUBSCRIPTIONS"):
                 botStateCash.saveBotState(userId, BotState.START);
@@ -146,7 +209,7 @@ public class MessageHandler {
                 stringBuilder.append("Осталось тренировок: ").append(user.getAmountOfDays()).append("\n");
             });
             return answerService.sendText(userId, stringBuilder.toString());
-        }else {
+        } else {
             return answerService.sendText(userId, "Нет пользователей");
         }
     }
