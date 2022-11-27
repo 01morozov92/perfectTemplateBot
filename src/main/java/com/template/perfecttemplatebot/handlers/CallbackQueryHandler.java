@@ -23,8 +23,7 @@ public class CallbackQueryHandler {
     private final KeyBoardTemplates keyBoardTemplates;
     private final AnswerService answerService;
     private final UserDAO userDAO;
-    private final Pattern authPattern = Pattern.compile("^@[_a-zA-Z]+$");
-    private Matcher matcher;
+    private final Pattern telegramTagPatternt = Pattern.compile("^@[_a-zA-Z]+$");
 
     private BotApiMethod<?> callbackAnswer;
     private User user;
@@ -53,23 +52,10 @@ public class CallbackQueryHandler {
                 break;
             //выбор количества дней
             case ("8"):
-                user.setAmountOfDays(user.getAmountOfDays() + 8);
-                callbackAnswer = promoteUser(userId, callbackAnswer);
-                botStateCash.saveBotState(userId, BotState.START);
-                break;
             case ("16"):
-                user.setAmountOfDays(user.getAmountOfDays() + 16);
-                callbackAnswer = promoteUser(userId, callbackAnswer);
-                botStateCash.saveBotState(userId, BotState.START);
-                break;
             case ("24"):
-                user.setAmountOfDays(user.getAmountOfDays() + 24);
-                callbackAnswer = promoteUser(userId, callbackAnswer);
-                botStateCash.saveBotState(userId, BotState.START);
-                break;
             case ("32"):
-                user.setAmountOfDays(user.getAmountOfDays() + 32);
-                callbackAnswer = promoteUser(userId, callbackAnswer);
+                callbackAnswer = promoteUser(userId, callbackAnswer,Integer.parseInt(data));
                 botStateCash.saveBotState(userId, BotState.START);
                 break;
             //вторая клавиатура
@@ -107,7 +93,7 @@ public class CallbackQueryHandler {
     private BotApiMethod<?> handleDynamicCallbacks(long userId, String data) {
         switch (botStateCash.getLastBotState()) {
             case ADD_ONE_DAY:
-                matcher = authPattern.matcher(data);
+                Matcher matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     botStateCash.saveBotState(userId, BotState.ADD_ONE_DAY);
@@ -121,7 +107,7 @@ public class CallbackQueryHandler {
                 }
                 break;
             case REMOVE_ONE_DAY:
-                matcher = authPattern.matcher(data);
+                matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     botStateCash.saveBotState(userId, BotState.REMOVE_ONE_DAY);
@@ -140,7 +126,7 @@ public class CallbackQueryHandler {
                 break;
             case CHECK_WAITING_ROOM:
             case RENEW_SUBSCRIPTION:
-                matcher = authPattern.matcher(data);
+                matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     botStateCash.saveBotState(userId, BotState.SET_DAYS);
@@ -154,13 +140,14 @@ public class CallbackQueryHandler {
         return callbackAnswer;
     }
 
-    private BotApiMethod<?> promoteUser(long userId, BotApiMethod<?> callBackAnswer) {
+    private BotApiMethod<?> promoteUser(long userId, BotApiMethod<?> callBackAnswer, int amountOfDays) {
+        user.setAmountOfDays(user.getAmountOfDays() + amountOfDays);
         user.setSubscriber(true);
         userDAO.save(user);
         if (userDAO.findByTelegramTag(user.getTelegramTag()).getSubscriber()) {
             callBackAnswer = keyBoardTemplates.getMainMenuMessage(
-                    "Ваша заявка подтверждена, вы оплатили " + user.getAmountOfDays() + " тренировок", user.getTelegramId());
-            answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + user.getAmountOfDays() + " тренировок");
+                    "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок", user.getTelegramId());
+            answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + amountOfDays + " тренировок, теперь доступно: " + user.getAmountOfDays() + " тренировок.");
         } else {
             answerService.sendTextRightNow(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
         }
