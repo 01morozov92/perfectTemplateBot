@@ -3,17 +3,17 @@ package com.template.perfecttemplatebot.templates;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 @Getter
 @Setter
 @Builder
-public class KeyBoard {
+public class Keyboard {
 
-    private final ReplyKeyboard replyKeyboard;
+    private final InlineKeyboardMarkup replyKeyboard;
     private final String keyBoardDescription;
 
-    public KeyBoard(ReplyKeyboard replyKeyboard, String keyBoardDescription) {
+    public Keyboard(InlineKeyboardMarkup replyKeyboard, String keyBoardDescription) {
         this.replyKeyboard = replyKeyboard;
         this.keyBoardDescription = keyBoardDescription;
     }

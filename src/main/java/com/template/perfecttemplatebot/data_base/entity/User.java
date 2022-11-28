@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-
-
 @Entity
 @Table(name = "users")
 @Getter
@@ -35,6 +33,9 @@ public class User {
 
     @Column(name = "subscriber")
     private Boolean subscriber;
+
+    @Column(name = "person_group")
+    private String personGroup;
 
     public User() {
     }

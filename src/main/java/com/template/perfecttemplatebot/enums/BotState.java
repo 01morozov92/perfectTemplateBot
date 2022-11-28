@@ -18,6 +18,7 @@ public enum BotState {
     RENEW_SUBSCRIPTION,
     CHECK_WAITING_ROOM,
     SET_DAYS,
+    SET_GROUP,
     SUB_MENU,
     SUB_MENU_2
 

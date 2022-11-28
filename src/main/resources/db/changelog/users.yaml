@@ -38,6 +38,11 @@ databaseChangeLog:
                   constraints:
                     nullable: true
               - column:
+                  name: person_group
+                  type: varchar(200)
+                  constraints:
+                    nullable: true
+              - column:
                   name: subscriber
                   type: boolean
                   constraints:

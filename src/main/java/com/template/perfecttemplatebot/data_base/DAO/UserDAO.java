@@ -4,7 +4,6 @@ import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.data_base.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Comparator;
@@ -52,28 +51,23 @@ public class UserDAO {
         userRepository.save(user);
     }
 
-    public SendMessage saveUser(Message message, long userId, SendMessage sendMessage, String lastName, String firstName, Boolean subscriber) {
-        String userName = message.getFrom().getUserName();
+    public void saveUser(Message message, long userId, String lastName, String firstName, Boolean subscriber) {
         User user = findByTelegramId(userId);
         user.setSubscriber(subscriber);
         user.setLastName(lastName);
         user.setFirstName(firstName);
         user.setTelegramId(userId);
-        user.setTelegramTag("@" + userName);
+        user.setTelegramTag("@" + message.getFrom().getUserName());
         user.setAmountOfDays(0);
         this.save(user);
-        sendMessage.setText("");
-        return sendMessage;
     }
 
-    public SendMessage addNewUser(Message message, long userId, SendMessage sendMessage) {
+    public void addNewUser(Message message, long userId) {
         User user = new User();
         user.setTelegramId(userId);
         user.setTelegramTag("@" + message.getFrom().getUserName());
         user.setSubscriber(false);
-        sendMessage.setText("");
         this.save(user);
-        return sendMessage;
     }
 
     public boolean isExist(long id) {

@@ -112,7 +112,7 @@ public class MessageHandler {
         sendMessage.setChatId(String.valueOf(userId));
         //Если новый пользователь
         if (!userDAO.isExist(userId)) {
-            userDAO.addNewUser(message, userId, sendMessage);
+            userDAO.addNewUser(message, userId);
             botState = botStateCash.saveBotState(userId, BotState.ENTRANCE);
         } else { //Если пользователь уже существует
             //Пользователь уже оплатил подписку
@@ -146,12 +146,11 @@ public class MessageHandler {
                     //Пользователь является админом
                     if (userId == keyBoardTemplates.getAdmin_id()) {
                         botStateCash.saveBotState(userId, BotState.START);
-                        userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], true);
-                        return answerService.sendText(userId,
-                                "Воспользуйтесь главным меню");
+                        userDAO.saveUser(message, userId, userData[0], userData[1], true);
+                        return keyBoardTemplates.getMainMenuMessage("Воспользуйтесь главным меню", userId);
                     } else { //Пользователь не админ
                         botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
-                        userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], false);
+                        userDAO.saveUser(message, userId, userData[0], userData[1], false);
                         return answerService.sendText(userId, "Необходимо подтверждение администратора. Можете написать ему в telegram @morozilya");
                     }
                 } else {//Пользователь представился неправильно
@@ -203,7 +202,7 @@ public class MessageHandler {
             case ("CHECK_WAITING_ROOM"):
                 return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getWaitingKeyboard());
             case ("SET_DAYS"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyBoard());
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard());
             case ("SUB_MENU_2"):
                 return answerService.mockHandler(userId);
             default:

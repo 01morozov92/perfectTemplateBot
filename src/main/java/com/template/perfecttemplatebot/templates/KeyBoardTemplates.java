@@ -96,7 +96,7 @@ public class KeyBoardTemplates {
         return replyKeyboardMarkup;
     }
 
-    public KeyBoard getAmountOfDaysKeyBoard() {
+    public Keyboard getAmountOfDaysKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtn = new InlineKeyboardButton();
@@ -107,11 +107,14 @@ public class KeyBoardTemplates {
         thirdBtn.setText("24");
         InlineKeyboardButton fourthBtn = new InlineKeyboardButton();
         fourthBtn.setText("32");
+        InlineKeyboardButton backToMainMenu = new InlineKeyboardButton();
+        backToMainMenu.setText("Вернуться в меню");
 
         firstBtn.setCallbackData("8");
         secondBtn.setCallbackData("16");
         thirdBtn.setCallbackData("24");
         fourthBtn.setCallbackData("32");
+        backToMainMenu.setCallbackData("back_to_main_menu");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         keyboardButtonsRow1.add(firstBtn);
@@ -119,16 +122,58 @@ public class KeyBoardTemplates {
         keyboardButtonsRow1.add(thirdBtn);
         keyboardButtonsRow1.add(fourthBtn);
 
+        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+        keyboardButtonsRow2.add(backToMainMenu);
+
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
+        rowList.add(keyboardButtonsRow2);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return new KeyBoard(inlineKeyboardMarkup, "Выберите количество оплаченных тренировок");
+        return new Keyboard(inlineKeyboardMarkup, "Выберите количество оплаченных тренировок");
+    }
+
+    public Keyboard getGroupsKeyboard() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        InlineKeyboardButton firstBtn = new InlineKeyboardButton();
+        firstBtn.setText("Младшая гр.");
+        InlineKeyboardButton secondBtn = new InlineKeyboardButton();
+        secondBtn.setText("Средняя гр.");
+        InlineKeyboardButton thirdBtn = new InlineKeyboardButton();
+        thirdBtn.setText("Женская индивидуальная гр.");
+        InlineKeyboardButton fourthBtn = new InlineKeyboardButton();
+        fourthBtn.setText("Взрослая группа");
+        InlineKeyboardButton backToMainMenu = new InlineKeyboardButton();
+        backToMainMenu.setText("Вернуться в меню");
+
+        firstBtn.setCallbackData("CHILDREN");
+        secondBtn.setCallbackData("TEENAGER");
+        thirdBtn.setCallbackData("FEMALE_INDIVIDUAL");
+        fourthBtn.setCallbackData("ADULT");
+        backToMainMenu.setCallbackData("PROFESSIONAL");
+
+        List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+        keyboardButtonsRow1.add(firstBtn);
+        keyboardButtonsRow1.add(secondBtn);
+        keyboardButtonsRow1.add(thirdBtn);
+        keyboardButtonsRow1.add(fourthBtn);
+
+        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+        keyboardButtonsRow2.add(backToMainMenu);
+
+        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
+        rowList.add(keyboardButtonsRow1);
+        rowList.add(keyboardButtonsRow2);
+
+        inlineKeyboardMarkup.setKeyboard(rowList);
+
+        return new Keyboard(inlineKeyboardMarkup, "Выберите группу для участника.");
     }
 
     //set calbackquery keyboard for push edit
-    public KeyBoard getSecondKeyBoard() {
+    public Keyboard getSecondKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -158,10 +203,10 @@ public class KeyBoardTemplates {
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return new KeyBoard(inlineKeyboardMarkup, "Это вторая клавиатура");
+        return new Keyboard(inlineKeyboardMarkup, "Это вторая клавиатура");
     }
 
-    public KeyBoard getThirdKeyBoard() {
+    public Keyboard getThirdKeyBoard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -191,10 +236,10 @@ public class KeyBoardTemplates {
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return new KeyBoard(inlineKeyboardMarkup, "Это третья клавиатура");
+        return new Keyboard(inlineKeyboardMarkup, "Это третья клавиатура");
     }
 
-    public KeyBoard getWaitingKeyboard() {
+    public Keyboard getWaitingKeyboard() {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<User> users = userDAO.findAllBySubscriber(false);
         for (User user : users) {
@@ -207,20 +252,20 @@ public class KeyBoardTemplates {
         if (rowList.isEmpty()) {
             rowList.add(getButton(
                     "Назад",
-                    "back_from_waiting_list"
+                    "back_to_main_menu"
             ));
             inlineKeyboardMarkup.setKeyboard(rowList);
-            return new KeyBoard(inlineKeyboardMarkup, "Нет пользователей в ожидании");
+            return new Keyboard(inlineKeyboardMarkup, "Нет пользователей в ожидании");
         }
         rowList.add(getButton(
                 "Назад",
-                "back_from_waiting_list"
+                "back_to_main_menu"
         ));
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return new KeyBoard(inlineKeyboardMarkup, "Список ожидающих пользователей");
+        return new Keyboard(inlineKeyboardMarkup, "Список ожидающих пользователей");
     }
 
-    public KeyBoard getSubscriptionKeyboard() {
+    public Keyboard getSubscriptionKeyboard() {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<User> users = userDAO.findAllBySubscriber(true);
         for (User user : users) {
@@ -233,17 +278,17 @@ public class KeyBoardTemplates {
         if (rowList.isEmpty()) {
             rowList.add(getButton(
                     "Назад",
-                    "back_from_waiting_list"
+                    "back_to_main_menu"
             ));
             inlineKeyboardMarkup.setKeyboard(rowList);
-            return new KeyBoard(inlineKeyboardMarkup, "Нет пользователей");
+            return new Keyboard(inlineKeyboardMarkup, "Нет пользователей");
         }
         rowList.add(getButton(
                 "Назад",
-                "back_from_waiting_list"
+                "back_to_main_menu"
         ));
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return new KeyBoard(inlineKeyboardMarkup, "Список пользователей");
+        return new Keyboard(inlineKeyboardMarkup, "Список пользователей");
     }
 
     private List<InlineKeyboardButton> getButton(String buttonName, String buttonCallBackData) {

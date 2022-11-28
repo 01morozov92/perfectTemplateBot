@@ -4,6 +4,7 @@ import com.template.perfecttemplatebot.cash.BotStateCash;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
+import com.template.perfecttemplatebot.enums.Group;
 import com.template.perfecttemplatebot.service.AnswerService;
 import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
 import lombok.SneakyThrows;
@@ -38,12 +39,12 @@ public class CallbackQueryHandler {
     public BotApiMethod<?> processCallbackQuery(CallbackQuery callbackQuery) {
         final long chatId = callbackQuery.getMessage().getChatId();
         final long userId = callbackQuery.getFrom().getId();
-        callbackQuery.getMessage().getMessageId();
+        Integer messageId = callbackQuery.getMessage().getMessageId();
 
 
         String data = callbackQuery.getData();
         switch (data) {
-            case ("back_from_waiting_list") -> {
+            case ("back_to_main_menu") -> {
                 callbackAnswer = answerService.sendText(userId,
                         "Воспользуйтесь главным меню");
                 botStateCash.saveBotState(userId, BotState.START);
@@ -53,9 +54,13 @@ public class CallbackQueryHandler {
                 callbackAnswer = promoteUser(userId, callbackAnswer, Integer.parseInt(data));
                 botStateCash.saveBotState(userId, BotState.START);
             }
+            case ("CHILDREN"), ("TEENAGER"), ("FEMALE_INDIVIDUAL"), ("ADULT"), ("PROFESSIONAL") -> {
+                callbackAnswer = answerService.mockHandler(userId);
+                botStateCash.saveBotState(userId, BotState.START);
+            }
             //вторая клавиатура
             case ("first_btn_second_menu") -> {
-                callbackAnswer = answerService.drawKeyBoardWithMsg(chatId, keyBoardTemplates.getThirdKeyBoard());
+                callbackAnswer = answerService.editKeyBoardWithMsg(chatId, keyBoardTemplates.getThirdKeyBoard(), messageId );
                 botStateCash.saveBotState(userId, BotState.START);
             }
             case ("second_btn_second_menu") -> {
@@ -79,12 +84,12 @@ public class CallbackQueryHandler {
                 callbackAnswer = new SendMessage(String.valueOf(chatId), "Третья заглушка подменю 2");
                 botStateCash.saveBotState(userId, BotState.START);
             }
-            default -> callbackAnswer = handleDynamicCallbacks(userId, data);
+            default -> callbackAnswer = handleDynamicCallbacks(userId, data, messageId);
         }
         return callbackAnswer;
     }
 
-    private BotApiMethod<?> handleDynamicCallbacks(long userId, String data) {
+    private BotApiMethod<?> handleDynamicCallbacks(long userId, String data, Integer messageId) {
         switch (botStateCash.getLastBotState()) {
             case ADD_ONE_DAY:
                 Matcher matcher = telegramTagPatternt.matcher(data);
@@ -94,7 +99,7 @@ public class CallbackQueryHandler {
                     int amountOfDays = user.getAmountOfDays();
                     user.setAmountOfDays(amountOfDays + 1);
                     userDAO.save(user);
-                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard());
+                    callbackAnswer = answerService.editKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard(), messageId);
                 } else {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
@@ -112,19 +117,29 @@ public class CallbackQueryHandler {
                     } else {
                         answerService.sendTextRightNow(userId, "У участника: " + data + " уже закончились оплаченные тренировки");
                     }
-                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard());
+                    callbackAnswer = answerService.editKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard(), messageId);
                 } else {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
                 }
                 break;
             case CHECK_WAITING_ROOM:
+                matcher = telegramTagPatternt.matcher(data);
+                if (matcher.find()) {
+                    user = userDAO.findByTelegramTag(data);
+                    botStateCash.saveBotState(userId, BotState.SET_GROUP);
+                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getGroupsKeyboard());
+                } else {
+                    callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
+                    botStateCash.saveBotState(userId, BotState.START);
+                }
+                break;
             case RENEW_SUBSCRIPTION:
                 matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     botStateCash.saveBotState(userId, BotState.SET_DAYS);
-                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyBoard());
+                    callbackAnswer = answerService.editKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard(), messageId);
                 } else {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
@@ -139,6 +154,20 @@ public class CallbackQueryHandler {
         user.setSubscriber(true);
         userDAO.save(user);
         if (userDAO.findByTelegramTag(user.getTelegramTag()).getSubscriber()) {
+            callBackAnswer = answerService.sendText(user.getTelegramId(),
+                    "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок");
+            answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + amountOfDays + " тренировок, теперь доступно: " + user.getAmountOfDays() + " тренировок.");
+        } else {
+            answerService.sendTextRightNow(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
+        }
+        return callBackAnswer;
+    }
+
+    private BotApiMethod<?> changeGroup(long userId, BotApiMethod<?> callBackAnswer, int amountOfDays, Group group) {
+        user.setPersonGroup(String.valueOf(group));
+        user.setSubscriber(true);
+        userDAO.save(user);
+        if (userDAO.findByTelegramTag(user.getTelegramTag()).getPersonGroup().equals(String.valueOf(group))) {
             callBackAnswer = answerService.sendText(user.getTelegramId(),
                     "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок");
             answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + amountOfDays + " тренировок, теперь доступно: " + user.getAmountOfDays() + " тренировок.");
