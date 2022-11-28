@@ -34,7 +34,7 @@ public class KeyBoardTemplates {
                                                   String textMessage,
                                                   final ReplyKeyboardMarkup replyKeyboardMarkup) {
         final SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
+        sendMessage.enableMarkdown(false);
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(textMessage);
         if (replyKeyboardMarkup != null) {
@@ -45,9 +45,18 @@ public class KeyBoardTemplates {
 
     public SendMessage getMainMenuMessage(final String textMessage, final long userId) {
         final ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(userId);
-
         return createMessageWithKeyboard(userId, textMessage, replyKeyboardMarkup);
     }
+
+//     public EditMessageReplyMarkup editMainMenuMessage(final String textMessage, final long userId, Integer messageId) {
+//        final ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(userId);
+//        Edit
+//        return EditMessageReplyMarkup.builder()
+//                .chatId(userId)
+//                .messageId(messageId)
+//                .replyMarkup(replyKeyboardMarkup)
+//                .build();
+//    }
 
     //Main menu
     private ReplyKeyboardMarkup getMainMenuKeyboard(long userId) {

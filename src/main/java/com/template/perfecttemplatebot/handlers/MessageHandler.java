@@ -25,8 +25,11 @@ public class MessageHandler {
     private final KeyBoardTemplates keyBoardTemplates;
     private final BotStateCash botStateCash;
     private final AnswerService answerService;
+    private boolean firstTimeIncome = true;
+    public static Integer mainMenuMessageId;
     @Value("${telegrambot.adminId}")
     int adminId;
+
     public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, AnswerService answerService) {
         this.userDAO = userDAO;
         this.keyBoardTemplates = keyBoardTemplates;
@@ -43,7 +46,13 @@ public class MessageHandler {
         //set state
         switch (inputMsg) {
             case "/start":
-                botState = BotState.START;
+                if (firstTimeIncome) {
+                    firstTimeIncome = false;
+                    mainMenuMessageId = message.getMessageId() + 2;
+                    botState = BotState.FIRST_START;
+                } else {
+                    botState = BotState.START;
+                }
                 break;
             case "Осталось тренировок":
                 botState = BotState.AMOUNT_OF_DAYS;
@@ -138,8 +147,8 @@ public class MessageHandler {
                     if (userId == keyBoardTemplates.getAdmin_id()) {
                         botStateCash.saveBotState(userId, BotState.START);
                         userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], true);
-                        return keyBoardTemplates.getMainMenuMessage(
-                                "Воспользуйтесь главным меню", userId);
+                        return answerService.sendText(userId,
+                                "Воспользуйтесь главным меню");
                     } else { //Пользователь не админ
                         botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
                         userDAO.saveUser(message, userId, sendMessage, userData[0], userData[1], false);
@@ -151,9 +160,12 @@ public class MessageHandler {
                 }
             case ("WAITING_ROOM"):
                 return answerService.sendText(userId, "Необходимо подтверждение администратора. Можете написать ему в telegram @morozilya");
-            case ("START"):
+            case ("FIRST_START"):
                 return keyBoardTemplates.getMainMenuMessage(
                         "Воспользуйтесь главным меню", userId);
+            case ("START"):
+                return answerService.sendText(userId,
+                        "Воспользуйтесь главным меню");
             case ("AMOUNT_OF_DAYS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 return answerService.sendText(userId, "У вас осталось " + userDAO.findByTelegramId(userId).getAmountOfDays().toString() + " неиспользованных тренировок");

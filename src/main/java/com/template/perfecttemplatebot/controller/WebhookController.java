@@ -50,7 +50,7 @@ public class WebhookController {
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(adminId));
-        sendMessage.setText("Произошла перезагрузка!");
+        sendMessage.setText("Добро пожаловать в наш телеграм бот!");
         telegramBot.execute(sendMessage);
     }
 }

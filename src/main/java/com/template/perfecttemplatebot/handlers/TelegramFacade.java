@@ -17,6 +17,8 @@ import java.util.List;
 public class TelegramFacade {
 
     final MessageHandler messageHandler;
+    private boolean firstTimeIncome = true;
+    public static Integer mainMessageId;
     final CallbackQueryHandler callbackQueryHandler;
     //todo удалить либо оставить
     private final AnswerService answerService;
@@ -38,11 +40,18 @@ public class TelegramFacade {
     //Срабатывает после любого апдейта, проверяет колбэк или месадж
     public BotApiMethod<?> handleUpdate(Update update) {
         if (update.hasCallbackQuery()) {
+            answerService.deleteAllMessages(update.getCallbackQuery().getMessage().getChatId(), update.getCallbackQuery().getMessage());
             CallbackQuery callbackQuery = update.getCallbackQuery();
             return callbackQueryHandler.processCallbackQuery(callbackQuery);
         } else {
+            if (firstTimeIncome){
+                Message message = update.getMessage();
+                mainMessageId = message.getMessageId();
+                firstTimeIncome = false;
+            }
             Message message = update.getMessage();
             if (message != null && message.hasText()) {
+                answerService.deleteAllMessages(message.getChatId(), message);
                 return messageHandler.handleInputMessage(message);
             }
         }

@@ -4,6 +4,7 @@ public enum BotState {
     ENTRANCE,
     AUTH,
     WAITING_ROOM,
+    FIRST_START,
     START,
     AMOUNT_OF_DAYS,
     REMOVE_ONE_DAY,

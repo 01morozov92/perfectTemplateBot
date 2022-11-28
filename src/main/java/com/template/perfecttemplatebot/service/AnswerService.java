@@ -2,19 +2,28 @@ package com.template.perfecttemplatebot.service;
 
 import com.template.perfecttemplatebot.bot.TelegramBot;
 import com.template.perfecttemplatebot.templates.KeyBoard;
+import com.template.perfecttemplatebot.templates.KeyBoardTemplates;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import java.util.List;
-
 import static com.template.perfecttemplatebot.app_config.ApplicationContextProvider.getApplicationContext;
+import static com.template.perfecttemplatebot.handlers.MessageHandler.mainMenuMessageId;
+import static com.template.perfecttemplatebot.handlers.TelegramFacade.mainMessageId;
 
 @Component
+@Slf4j
 public class AnswerService {
+
+    private final KeyBoardTemplates keyBoardTemplates;
+
+    public AnswerService(KeyBoardTemplates keyBoardTemplates) {
+        this.keyBoardTemplates = keyBoardTemplates;
+    }
 
     public BotApiMethod<?> drawKeyBoardWithMsg(long userId, KeyBoard keyBoard) {
         SendMessage replyMessage = new SendMessage();
@@ -51,18 +60,41 @@ public class AnswerService {
         bot.execute(sendText(userId, text));
     }
 
+//    @SneakyThrows
+//    public void deleteAllMessages(long userId, List<Message> messages) {
+//        TelegramBot bot = (TelegramBot) getApplicationContext().getAutowireCapableBeanFactory().getBean("springWebhookBot");
+//        if (messages != null) {
+//            if (!messages.isEmpty()) {
+//                for (Message message : messages) {
+//                    bot.execute(DeleteMessage.builder()
+//                            .chatId(userId)
+//                            .messageId(message.getMessageId())
+//                            .build());
+//                }
+//            }
+//        }
+//    }
+
     @SneakyThrows
-    public void deleteAllMessages(long userId, List<Message> messages) {
+    public void deleteAllMessages(long userId, Message message) {
         TelegramBot bot = (TelegramBot) getApplicationContext().getAutowireCapableBeanFactory().getBean("springWebhookBot");
-        if (messages != null) {
-            if (!messages.isEmpty()) {
-                for (Message message : messages) {
+        Integer messageId = message.getMessageId();
+        do {
+            try {
+                if (!messageId.equals(mainMessageId) && !messageId.equals(mainMenuMessageId)) {
                     bot.execute(DeleteMessage.builder()
                             .chatId(userId)
-                            .messageId(message.getMessageId())
+                            .messageId(messageId)
                             .build());
                 }
+            } catch (Throwable t) {
+                bot.execute(sendText(userId,
+                        "\uD83C\uDFC0"));
+                break;
             }
-        }
+            messageId--;
+        } while (true);
+
     }
 }
+

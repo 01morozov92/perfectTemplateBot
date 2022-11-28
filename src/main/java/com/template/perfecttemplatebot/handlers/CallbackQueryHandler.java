@@ -35,18 +35,17 @@ public class CallbackQueryHandler {
     }
 
     @SneakyThrows
-    public BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
-        final long chatId = buttonQuery.getMessage().getChatId();
-        final long userId = buttonQuery.getFrom().getId();
-        buttonQuery.getMessage().getMessageId();
+    public BotApiMethod<?> processCallbackQuery(CallbackQuery callbackQuery) {
+        final long chatId = callbackQuery.getMessage().getChatId();
+        final long userId = callbackQuery.getFrom().getId();
+        callbackQuery.getMessage().getMessageId();
 
 
-        String data = buttonQuery.getData();
-
+        String data = callbackQuery.getData();
         switch (data) {
             case ("back_from_waiting_list") -> {
-                callbackAnswer = keyBoardTemplates.getMainMenuMessage(
-                        "Воспользуйтесь главным меню", userId);
+                callbackAnswer = answerService.sendText(userId,
+                        "Воспользуйтесь главным меню");
                 botStateCash.saveBotState(userId, BotState.START);
             }
             //выбор количества дней
@@ -140,8 +139,8 @@ public class CallbackQueryHandler {
         user.setSubscriber(true);
         userDAO.save(user);
         if (userDAO.findByTelegramTag(user.getTelegramTag()).getSubscriber()) {
-            callBackAnswer = keyBoardTemplates.getMainMenuMessage(
-                    "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок", user.getTelegramId());
+            callBackAnswer = answerService.sendText(user.getTelegramId(),
+                    "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок");
             answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + amountOfDays + " тренировок, теперь доступно: " + user.getAmountOfDays() + " тренировок.");
         } else {
             answerService.sendTextRightNow(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
