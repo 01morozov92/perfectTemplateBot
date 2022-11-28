@@ -54,9 +54,9 @@ public class CallbackQueryHandler {
                 callbackAnswer = promoteUser(userId, callbackAnswer, Integer.parseInt(data));
                 botStateCash.saveBotState(userId, BotState.START);
             }
-            case ("CHILDREN"), ("TEENAGER"), ("FEMALE_INDIVIDUAL"), ("ADULT"), ("PROFESSIONAL") -> {
-                callbackAnswer = answerService.mockHandler(userId);
-                botStateCash.saveBotState(userId, BotState.START);
+            case ("CHILDREN"), ("TEENAGER"), ("FEMALE_INDIVIDUAL"), ("ADULT") -> {
+                callbackAnswer = changeGroup(userId, callbackAnswer, Group.valueOf(data));
+                botStateCash.saveBotState(userId, BotState.RENEW_SUBSCRIPTION);
             }
             //вторая клавиатура
             case ("first_btn_second_menu") -> {
@@ -139,7 +139,7 @@ public class CallbackQueryHandler {
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     botStateCash.saveBotState(userId, BotState.SET_DAYS);
-                    callbackAnswer = answerService.editKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard(), messageId);
+                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard());
                 } else {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
@@ -149,31 +149,30 @@ public class CallbackQueryHandler {
         return callbackAnswer;
     }
 
-    private BotApiMethod<?> promoteUser(long userId, BotApiMethod<?> callBackAnswer, int amountOfDays) {
+    private BotApiMethod<?> promoteUser(long userId, BotApiMethod<?> callBackAnswerInMethod, int amountOfDays) {
         user.setAmountOfDays(user.getAmountOfDays() + amountOfDays);
         user.setSubscriber(true);
         userDAO.save(user);
         if (userDAO.findByTelegramTag(user.getTelegramTag()).getSubscriber()) {
-            callBackAnswer = answerService.sendText(user.getTelegramId(),
+            callBackAnswerInMethod = answerService.sendText(user.getTelegramId(),
                     "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок");
             answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + amountOfDays + " тренировок, теперь доступно: " + user.getAmountOfDays() + " тренировок.");
         } else {
-            answerService.sendTextRightNow(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
+            callBackAnswerInMethod = answerService.sendText(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
         }
-        return callBackAnswer;
+        return callBackAnswerInMethod;
     }
 
-    private BotApiMethod<?> changeGroup(long userId, BotApiMethod<?> callBackAnswer, int amountOfDays, Group group) {
+    private BotApiMethod<?> changeGroup(long userId, BotApiMethod<?> callBackAnswerInMethod, Group group) {
         user.setPersonGroup(String.valueOf(group));
         user.setSubscriber(true);
         userDAO.save(user);
         if (userDAO.findByTelegramTag(user.getTelegramTag()).getPersonGroup().equals(String.valueOf(group))) {
-            callBackAnswer = answerService.sendText(user.getTelegramId(),
-                    "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок");
-            answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + amountOfDays + " тренировок, теперь доступно: " + user.getAmountOfDays() + " тренировок.");
+            botStateCash.saveBotState(userId, BotState.SET_DAYS);
+            callBackAnswerInMethod = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard());
         } else {
-            answerService.sendTextRightNow(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
+            callBackAnswerInMethod = answerService.sendText(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
         }
-        return callBackAnswer;
+        return callBackAnswerInMethod;
     }
 }

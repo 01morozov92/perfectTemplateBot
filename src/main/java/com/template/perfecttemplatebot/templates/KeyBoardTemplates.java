@@ -48,16 +48,6 @@ public class KeyBoardTemplates {
         return createMessageWithKeyboard(userId, textMessage, replyKeyboardMarkup);
     }
 
-//     public EditMessageReplyMarkup editMainMenuMessage(final String textMessage, final long userId, Integer messageId) {
-//        final ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(userId);
-//        Edit
-//        return EditMessageReplyMarkup.builder()
-//                .chatId(userId)
-//                .messageId(messageId)
-//                .replyMarkup(replyKeyboardMarkup)
-//                .build();
-//    }
-
     //Main menu
     private ReplyKeyboardMarkup getMainMenuKeyboard(long userId) {
 
@@ -152,7 +142,7 @@ public class KeyBoardTemplates {
         secondBtn.setCallbackData("TEENAGER");
         thirdBtn.setCallbackData("FEMALE_INDIVIDUAL");
         fourthBtn.setCallbackData("ADULT");
-        backToMainMenu.setCallbackData("PROFESSIONAL");
+        backToMainMenu.setCallbackData("back_to_main_menu");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         keyboardButtonsRow1.add(firstBtn);
