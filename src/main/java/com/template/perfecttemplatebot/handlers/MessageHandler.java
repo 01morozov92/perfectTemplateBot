@@ -162,7 +162,7 @@ public class MessageHandler {
             case ("ALL_SUBSCRIPTIONS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 StringBuilder stringBuilder = new StringBuilder();
-                userDAO.findAllUsers().forEach(user -> {
+                userDAO.findAllUsers().stream().filter(User::getSubscriber).forEach(user -> {
                     stringBuilder.append(user.getLastName()).append(" ");
                     stringBuilder.append(user.getFirstName()).append(" ");
                     stringBuilder.append(user.getTelegramTag()).append(" ");
@@ -182,7 +182,7 @@ public class MessageHandler {
                 return printSubscriptions(users, userId);
             case ("LIST_OF_EXPIRED_SUBSCRIPTIONS"):
                 botStateCash.saveBotState(userId, BotState.START);
-                users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() == 0).collect(Collectors.toList());
+                users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() == 0 && user.getSubscriber()).collect(Collectors.toList());
                 return printSubscriptions(users, userId);
             case ("REMOVE_ONE_DAY"):
                 return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getGroupsKeyboard(false, userId, BotState.GET_GROUP_FOR_REMOVE_ONE_DAY));
