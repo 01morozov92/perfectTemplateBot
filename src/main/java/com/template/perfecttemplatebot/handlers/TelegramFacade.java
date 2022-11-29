@@ -40,7 +40,6 @@ public class TelegramFacade {
             }
             Message message = update.getMessage();
             if (message != null && message.hasText()) {
-                answerService.deleteAllMessages(message.getChatId(), message);
                 return messageHandler.handleInputMessage(message);
             }
         }

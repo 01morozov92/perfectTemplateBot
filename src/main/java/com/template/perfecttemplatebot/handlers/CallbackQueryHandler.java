@@ -52,11 +52,9 @@ public class CallbackQueryHandler {
         switch (data) {
             case ("back") -> {
                 callbackAnswer = answerService.drawKeyBoardWithMsg(userId, memory.getLastKeyboard(userId));
-                answerService.deleteAllMessages(chatId, callbackQuery.getMessage());
             }
             case ("back_to_main_menu") -> {
                 callbackAnswer = answerService.sendText(userId, "Воспользуйтесь главным меню");
-                answerService.deleteAllMessages(chatId, callbackQuery.getMessage());
             }
             //выбор количества дней
             case ("8"), ("16"), ("24"), ("32") -> {
@@ -110,38 +108,7 @@ public class CallbackQueryHandler {
     private BotApiMethod<?> handleDynamicCallbacks(long userId, String data, Integer messageId) {
         Matcher matcher = telegramTagPatternt.matcher(data);
         switch (botStateCash.getLastBotState()) {
-//            case ADD_ONE_DAY:
-//                if (matcher.find()) {
-//                    user = userDAO.findByTelegramTag(data);
-////                    botStateCash.saveBotState(userId, BotState.ADD_ONE_DAY);
-//                    int amountOfDays = user.getAmountOfDays();
-//                    user.setAmountOfDays(amountOfDays + 1);
-//                    userDAO.save(user);
-//                    callbackAnswer = answerService.editKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard(true, userId, BotState.ADD_ONE_DAY, userDAO.findAllBySubscriber(true)), messageId);
-//                } else {
-//                    callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
-//                    botStateCash.saveBotState(userId, BotState.START);
-//                }
-//                break;
-//            case REMOVE_ONE_DAY:
-//                matcher = telegramTagPatternt.matcher(data);
-//                if (matcher.find()) {
-//                    user = userDAO.findByTelegramTag(data);
-////                    botStateCash.saveBotState(userId, BotState.REMOVE_ONE_DAY);
-//                    int amountOfDays = user.getAmountOfDays();
-//                    if (amountOfDays > 0) {
-//                        user.setAmountOfDays(amountOfDays - 1);
-//                        userDAO.save(user);
-//                    } else {
-//                        answerService.sendTextRightNow(userId, "У участника: " + data + " уже закончились оплаченные тренировки");
-//                    }
-//                    callbackAnswer = answerService.editKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard(true, userId, BotState.REMOVE_ONE_DAY, userDAO.findAllBySubscriber(true)), messageId);
-//                } else {
-//                    callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
-//                    botStateCash.saveBotState(userId, BotState.START);
-//                }
-//                break;
-            case REMOVE_ONE_DAY:
+            case REMOVE_ONE_DAY -> {
                 matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
@@ -157,8 +124,8 @@ public class CallbackQueryHandler {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
                 }
-                break;
-            case ADD_ONE_DAY:
+            }
+            case ADD_ONE_DAY -> {
                 matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
@@ -170,40 +137,37 @@ public class CallbackQueryHandler {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
                 }
-                break;
-            case SET_GROUP:
+            }
+            case SET_GROUP -> {
                 matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getGroupsKeyboard(false, userId, BotState.SET_GROUP));
-//                    botStateCash.saveBotState(userId, BotState.SET_GROUP);
                 } else {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
                 }
-                break;
-            case SET_DAYS:
+            }
+            case SET_DAYS -> {
                 matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
-//                    botStateCash.saveBotState(userId, BotState.START);
                     callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard(false, userId, BotState.START));
                 } else {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.START);
                 }
-                break;
-            case GET_GROUP_FOR_REMOVE_ONE_DAY:
+            }
+            case GET_GROUP_FOR_REMOVE_ONE_DAY -> {
                 matcher = telegramTagPatternt.matcher(data);
                 if (matcher.find()) {
                     user = userDAO.findByTelegramTag(data);
                     callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getGroupsKeyboard(false, userId, BotState.GET_GROUP_FOR_REMOVE_ONE_DAY));
-//                    botStateCash.saveBotState(userId, BotState.GET_USERS_FROM_GROUP);
                 } else {
                     callbackAnswer = answerService.sendText(userId, "Такой участник: " + data + " не найден в базе");
                     botStateCash.saveBotState(userId, BotState.GET_GROUP_FOR_REMOVE_ONE_DAY);
                 }
-                break;
+            }
         }
         return callbackAnswer;
     }
@@ -217,7 +181,6 @@ public class CallbackQueryHandler {
             callBackAnswerInMethod = answerService.sendText(user.getTelegramId(),
                     "Ваша заявка подтверждена, вы оплатили " + amountOfDays + " тренировок");
             answerService.sendTextRightNow(userId, "Подписка для пользователя: " + user.getTelegramTag() + " успешно продлена на " + amountOfDays + " тренировок, теперь доступно: " + user.getAmountOfDays() + " тренировок.");
-            answerService.deleteAllMessages(userId, message);
         } else {
             callBackAnswerInMethod = answerService.sendText(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
         }
@@ -230,7 +193,6 @@ public class CallbackQueryHandler {
         userDAO.save(user);
         BotApiMethod<?> callBackAnswerInMethod;
         if (userDAO.findByTelegramTag(user.getTelegramTag()).getPersonGroup().equals(String.valueOf(group))) {
-//            botStateCash.saveBotState(userId, BotState.SET_DAYS);
             callBackAnswerInMethod = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard(false, userId, BotState.SET_DAYS));
         } else {
             callBackAnswerInMethod = answerService.sendText(userId, "[ОШИБКА!] Подписка для пользователя: " + user.getTelegramTag() + " не продлена!");
@@ -247,7 +209,6 @@ public class CallbackQueryHandler {
     }
 
     private BotApiMethod<?> drawUsersFromGroup(long userId, BotState botState, Group group) {
-//        botStateCash.saveBotState(userId, BotState.SET_DAYS);
         return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard(false, userId, botState, userDAO.findAllByPersonGroup(String.valueOf(group))));
     }
 }

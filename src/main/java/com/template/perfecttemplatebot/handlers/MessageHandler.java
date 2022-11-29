@@ -1,7 +1,6 @@
 package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
-import com.template.perfecttemplatebot.cash.Memory;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
@@ -26,17 +25,14 @@ public class MessageHandler {
     private final KeyBoardTemplates keyBoardTemplates;
     private final BotStateCash botStateCash;
     private final AnswerService answerService;
-    private boolean firstTimeIncome = true;
-    private final Memory memory;
     @Value("${telegrambot.adminId}")
     int adminId;
 
-    public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, AnswerService answerService, Memory memory) {
+    public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, AnswerService answerService) {
         this.userDAO = userDAO;
         this.keyBoardTemplates = keyBoardTemplates;
         this.botStateCash = botStateCash;
         this.answerService = answerService;
-        this.memory = memory;
     }
 
     //обработка текстового сообщения и установка соответствующего состояния бота
@@ -117,14 +113,7 @@ public class MessageHandler {
             } else { //Пользователь не оплатил подписку
                 //Пользователь уже представился
                 if (userDAO.hasName(userId)) {
-                    if (userId == keyBoardTemplates.getAdmin_id() && !userDAO.isSubscriber(userId)) {
-                            User user = userDAO.findByTelegramId(userId);
-                            user.setSubscriber(true);
-                            userDAO.save(user);
-                            botState = botStateCash.saveBotState(userId, BotState.START);
-                    } else {
-                        botState = botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
-                    }
+                    botState = botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
                 } else { //Пользователь еще не представился
                     botState = botStateCash.saveBotState(userId, BotState.AUTH);
                 }
@@ -163,15 +152,8 @@ public class MessageHandler {
             case ("WAITING_ROOM"):
                 return answerService.sendText(userId, "Необходимо подтверждение администратора. Можете написать ему в telegram @morozilya");
             case ("START"):
-                if (firstTimeIncome) {
-                    firstTimeIncome = false;
-                    memory.setMainMenuMessageId(message.getMessageId() + 2);
-                    return keyBoardTemplates.getMainMenuMessage(
-                            "Воспользуйтесь главным меню", userId);
-                }else {
-                    return answerService.sendText(userId,
-                            "Воспользуйтесь главным меню");
-                }
+                return keyBoardTemplates.getMainMenuMessage(
+                        "Воспользуйтесь главным меню", userId);
             case ("AMOUNT_OF_DAYS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 return answerService.sendText(userId, "У вас осталось " + userDAO.findByTelegramId(userId).getAmountOfDays().toString() + " неиспользованных тренировок");

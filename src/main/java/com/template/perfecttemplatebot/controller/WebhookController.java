@@ -47,10 +47,4 @@ public class WebhookController {
         setWebhook.setUrl(webHookPath);
         telegramBot.execute(setWebhook);
     }
-//
-//        SendMessage sendMessage = new SendMessage();
-//        sendMessage.setChatId(String.valueOf(adminId));
-//        sendMessage.setText("Добро пожаловать в наш телеграм бот!");
-//        telegramBot.execute(sendMessage);
-//    }
 }
