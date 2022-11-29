@@ -1,6 +1,7 @@
 package com.template.perfecttemplatebot.service;
 
 import com.template.perfecttemplatebot.bot.TelegramBot;
+import com.template.perfecttemplatebot.cash.Memory;
 import com.template.perfecttemplatebot.templates.Keyboard;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +11,19 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import static com.template.perfecttemplatebot.app_config.ApplicationContextProvider.getApplicationContext;
-import static com.template.perfecttemplatebot.handlers.MessageHandler.mainMenuMessageId;
-import static com.template.perfecttemplatebot.handlers.TelegramFacade.mainMessageId;
 
 @Component
 @Slf4j
 public class AnswerService {
+
+    private final Memory memory;
+
+    public AnswerService(Memory memory) {
+        this.memory = memory;
+    }
 
     public BotApiMethod<?> drawKeyBoardWithMsg(long userId, Keyboard keyBoard) {
         SendMessage replyMessage = new SendMessage();
@@ -31,7 +37,7 @@ public class AnswerService {
         EditMessageReplyMarkup editMessageReplyMarkup = new EditMessageReplyMarkup();
         editMessageReplyMarkup.setChatId(String.valueOf(userId));
         editMessageReplyMarkup.setMessageId(messageId);
-        editMessageReplyMarkup.setReplyMarkup(keyBoard.getReplyKeyboard());
+        editMessageReplyMarkup.setReplyMarkup((InlineKeyboardMarkup) keyBoard.getReplyKeyboard());
         return editMessageReplyMarkup;
     }
 
@@ -61,7 +67,7 @@ public class AnswerService {
         Integer messageId = message.getMessageId();
         do {
             try {
-                if (!messageId.equals(mainMessageId) && !messageId.equals(mainMenuMessageId)) {
+                if (!messageId.equals(memory.getMainMessageId()) && !messageId.equals(memory.getMainMenuMessageId())) {
                     bot.execute(DeleteMessage.builder()
                             .chatId(userId)
                             .messageId(messageId)

@@ -1,6 +1,7 @@
 package com.template.perfecttemplatebot.handlers;
 
 import com.template.perfecttemplatebot.cash.BotStateCash;
+import com.template.perfecttemplatebot.cash.Memory;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.data_base.entity.User;
 import com.template.perfecttemplatebot.enums.BotState;
@@ -26,15 +27,16 @@ public class MessageHandler {
     private final BotStateCash botStateCash;
     private final AnswerService answerService;
     private boolean firstTimeIncome = true;
-    public static Integer mainMenuMessageId;
+    private final Memory memory;
     @Value("${telegrambot.adminId}")
     int adminId;
 
-    public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, AnswerService answerService) {
+    public MessageHandler(UserDAO userDAO, KeyBoardTemplates keyBoardTemplates, BotStateCash botStateCash, AnswerService answerService, Memory memory) {
         this.userDAO = userDAO;
         this.keyBoardTemplates = keyBoardTemplates;
         this.botStateCash = botStateCash;
         this.answerService = answerService;
+        this.memory = memory;
     }
 
     //обработка текстового сообщения и установка соответствующего состояния бота
@@ -46,13 +48,7 @@ public class MessageHandler {
         //set state
         switch (inputMsg) {
             case "/start":
-                if (firstTimeIncome) {
-                    firstTimeIncome = false;
-                    mainMenuMessageId = message.getMessageId() + 2;
-                    botState = BotState.FIRST_START;
-                } else {
-                    botState = BotState.START;
-                }
+                botState = BotState.START;
                 break;
             case "Осталось тренировок":
                 botState = BotState.AMOUNT_OF_DAYS;
@@ -121,7 +117,14 @@ public class MessageHandler {
             } else { //Пользователь не оплатил подписку
                 //Пользователь уже представился
                 if (userDAO.hasName(userId)) {
-                    botState = botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
+                    if (userId == keyBoardTemplates.getAdmin_id() && !userDAO.isSubscriber(userId)) {
+                            User user = userDAO.findByTelegramId(userId);
+                            user.setSubscriber(true);
+                            userDAO.save(user);
+                            botState = botStateCash.saveBotState(userId, BotState.START);
+                    } else {
+                        botState = botStateCash.saveBotState(userId, BotState.WAITING_ROOM);
+                    }
                 } else { //Пользователь еще не представился
                     botState = botStateCash.saveBotState(userId, BotState.AUTH);
                 }
@@ -159,12 +162,16 @@ public class MessageHandler {
                 }
             case ("WAITING_ROOM"):
                 return answerService.sendText(userId, "Необходимо подтверждение администратора. Можете написать ему в telegram @morozilya");
-            case ("FIRST_START"):
-                return keyBoardTemplates.getMainMenuMessage(
-                        "Воспользуйтесь главным меню", userId);
             case ("START"):
-                return answerService.sendText(userId,
-                        "Воспользуйтесь главным меню");
+                if (firstTimeIncome) {
+                    firstTimeIncome = false;
+                    memory.setMainMenuMessageId(message.getMessageId() + 2);
+                    return keyBoardTemplates.getMainMenuMessage(
+                            "Воспользуйтесь главным меню", userId);
+                }else {
+                    return answerService.sendText(userId,
+                            "Воспользуйтесь главным меню");
+                }
             case ("AMOUNT_OF_DAYS"):
                 botStateCash.saveBotState(userId, BotState.START);
                 return answerService.sendText(userId, "У вас осталось " + userDAO.findByTelegramId(userId).getAmountOfDays().toString() + " неиспользованных тренировок");
@@ -195,14 +202,16 @@ public class MessageHandler {
                 botStateCash.saveBotState(userId, BotState.START);
                 users = userDAO.findAllUsers().stream().filter(user -> user.getAmountOfDays() == 0).collect(Collectors.toList());
                 return printSubscriptions(users, userId);
-            case ("ADD_ONE_DAY"):
             case ("REMOVE_ONE_DAY"):
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getGroupsKeyboard(false, userId, BotState.GET_GROUP_FOR_REMOVE_ONE_DAY));
+            case ("ADD_ONE_DAY"):
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getGroupsKeyboard(false, userId, BotState.GET_GROUP_FOR_ADD_ONE_DAY));
             case ("RENEW_SUBSCRIPTION"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard());
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getGroupsKeyboard(false, userId, BotState.GET_GROUP_FOR_RENEW_SUBSCRIPTION));
             case ("CHECK_WAITING_ROOM"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getWaitingKeyboard());
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSubscriptionKeyboard(false, userId, BotState.SET_GROUP, userDAO.findAllBySubscriber(false)));
             case ("SET_DAYS"):
-                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard());
+                return answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getAmountOfDaysKeyboard(false, userId, BotState.SET_DAYS));
             case ("SUB_MENU_2"):
                 return answerService.mockHandler(userId);
             default:

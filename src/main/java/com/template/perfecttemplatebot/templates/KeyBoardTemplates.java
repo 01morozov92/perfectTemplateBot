@@ -1,7 +1,10 @@
 package com.template.perfecttemplatebot.templates;
 
+import com.template.perfecttemplatebot.cash.BotStateCash;
+import com.template.perfecttemplatebot.cash.Memory;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
 import com.template.perfecttemplatebot.data_base.entity.User;
+import com.template.perfecttemplatebot.enums.BotState;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,14 +29,17 @@ public class KeyBoardTemplates {
     @Value("${telegrambot.adminId}")
     private int admin_id;
 
-    public KeyBoardTemplates(UserDAO userDAO) {
+    private final Memory memory;
+    private final BotStateCash botStateCash;
+
+    public KeyBoardTemplates(UserDAO userDAO, Memory memory, BotStateCash botStateCash) {
         this.userDAO = userDAO;
+        this.memory = memory;
+        this.botStateCash = botStateCash;
     }
 
-    private SendMessage createMessageWithKeyboard(final long chatId,
-                                                  String textMessage,
-                                                  final ReplyKeyboardMarkup replyKeyboardMarkup) {
-        final SendMessage sendMessage = new SendMessage();
+    private SendMessage createMessageWithKeyboard(long chatId, String textMessage, ReplyKeyboardMarkup replyKeyboardMarkup) {
+        SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(false);
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(textMessage);
@@ -86,7 +92,7 @@ public class KeyBoardTemplates {
         return replyKeyboardMarkup;
     }
 
-    public Keyboard getAmountOfDaysKeyboard() {
+    public Keyboard getAmountOfDaysKeyboard(boolean isEdit, long userId, BotState botState) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtn = new InlineKeyboardButton();
@@ -120,11 +126,14 @@ public class KeyBoardTemplates {
         rowList.add(keyboardButtonsRow2);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new Keyboard(inlineKeyboardMarkup, "Выберите количество оплаченных тренировок");
+        if (isEdit) {
+            return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Выберите количество оплаченных тренировок", memory, botState, botStateCash, userId);
+        } else {
+            return new Keyboard(inlineKeyboardMarkup, "Выберите количество оплаченных тренировок", memory, botState, botStateCash, userId);
+        }
     }
 
-    public Keyboard getGroupsKeyboard() {
+    public Keyboard getGroupsKeyboard(boolean isEdit, Long userId, BotState botState) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtn = new InlineKeyboardButton();
@@ -158,12 +167,15 @@ public class KeyBoardTemplates {
         rowList.add(keyboardButtonsRow2);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new Keyboard(inlineKeyboardMarkup, "Выберите группу для участника.");
+        if (isEdit) {
+            return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Выберите группу для участника.", memory, botState, botStateCash, userId);
+        } else {
+            return new Keyboard(inlineKeyboardMarkup, "Выберите группу для участника.", memory, botState, botStateCash, userId);
+        }
     }
 
     //set calbackquery keyboard for push edit
-    public Keyboard getSecondKeyBoard() {
+    public Keyboard getSecondKeyBoard(boolean isEdit, Long userId, BotState botState) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -192,11 +204,14 @@ public class KeyBoardTemplates {
         rowList.add(keyboardButtonsRow3);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new Keyboard(inlineKeyboardMarkup, "Это вторая клавиатура");
+        if (isEdit) {
+            return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Это вторая клавиатура", memory, botState, botStateCash, userId);
+        } else {
+            return new Keyboard(inlineKeyboardMarkup, "Это вторая клавиатура", memory, botState, botStateCash, userId);
+        }
     }
 
-    public Keyboard getThirdKeyBoard() {
+    public Keyboard getThirdKeyBoard(boolean isEdit, Long userId, BotState botState) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -225,39 +240,15 @@ public class KeyBoardTemplates {
         rowList.add(keyboardButtonsRow3);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new Keyboard(inlineKeyboardMarkup, "Это третья клавиатура");
+        if (isEdit) {
+            return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Это третья клавиатура", memory, botState, botStateCash, userId);
+        } else {
+            return new Keyboard(inlineKeyboardMarkup, "Это третья клавиатура", memory, botState, botStateCash, userId);
+        }
     }
 
-    public Keyboard getWaitingKeyboard() {
+    public Keyboard getSubscriptionKeyboard(boolean isEdit, Long userId, BotState botState, List<User> users) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        List<User> users = userDAO.findAllBySubscriber(false);
-        for (User user : users) {
-            rowList.add(getButton(
-                    "%s %s".formatted(user.getFirstName(), user.getLastName()),
-                    user.getTelegramTag()
-            ));
-        }
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        if (rowList.isEmpty()) {
-            rowList.add(getButton(
-                    "Назад",
-                    "back_to_main_menu"
-            ));
-            inlineKeyboardMarkup.setKeyboard(rowList);
-            return new Keyboard(inlineKeyboardMarkup, "Нет пользователей в ожидании");
-        }
-        rowList.add(getButton(
-                "Назад",
-                "back_to_main_menu"
-        ));
-        inlineKeyboardMarkup.setKeyboard(rowList);
-        return new Keyboard(inlineKeyboardMarkup, "Список ожидающих пользователей");
-    }
-
-    public Keyboard getSubscriptionKeyboard() {
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        List<User> users = userDAO.findAllBySubscriber(true);
         for (User user : users) {
             rowList.add(getButton(
                     "%s %s %s".formatted(userDAO.findByTelegramTag(user.getTelegramTag()).getAmountOfDays(), user.getFirstName(), user.getLastName()),
@@ -267,18 +258,23 @@ public class KeyBoardTemplates {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         if (rowList.isEmpty()) {
             rowList.add(getButton(
-                    "Назад",
+                    "Вернуться в меню",
                     "back_to_main_menu"
             ));
             inlineKeyboardMarkup.setKeyboard(rowList);
-            return new Keyboard(inlineKeyboardMarkup, "Нет пользователей");
+            return new Keyboard(inlineKeyboardMarkup, "Нет пользователей", memory, botState, botStateCash, userId);
+        } else {
+            rowList.add(getButton(
+                    "Назад",
+                    "back"
+            ));
         }
-        rowList.add(getButton(
-                "Назад",
-                "back_to_main_menu"
-        ));
         inlineKeyboardMarkup.setKeyboard(rowList);
-        return new Keyboard(inlineKeyboardMarkup, "Список пользователей");
+        if (isEdit) {
+            return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Список пользователей", memory, botState, botStateCash, userId);
+        } else {
+            return new Keyboard(inlineKeyboardMarkup, "Список пользователей", memory, botState, botStateCash, userId);
+        }
     }
 
     private List<InlineKeyboardButton> getButton(String buttonName, String buttonCallBackData) {

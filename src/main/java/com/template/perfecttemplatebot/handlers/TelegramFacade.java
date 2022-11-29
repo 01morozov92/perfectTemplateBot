@@ -1,5 +1,6 @@
 package com.template.perfecttemplatebot.handlers;
 
+import com.template.perfecttemplatebot.cash.Memory;
 import com.template.perfecttemplatebot.service.AnswerService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -14,13 +15,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class TelegramFacade {
 
     final MessageHandler messageHandler;
-    private boolean firstTimeIncome = true;
-    public static Integer mainMessageId;
+    boolean firstTimeIncome = true;
+    final Memory memory;
     final CallbackQueryHandler callbackQueryHandler;
-    private final AnswerService answerService;
+    final AnswerService answerService;
 
-    public TelegramFacade(MessageHandler messageHandler, CallbackQueryHandler callbackQueryHandler, AnswerService answerService) {
+    public TelegramFacade(MessageHandler messageHandler, Memory memory, CallbackQueryHandler callbackQueryHandler, AnswerService answerService) {
         this.messageHandler = messageHandler;
+        this.memory = memory;
         this.callbackQueryHandler = callbackQueryHandler;
         this.answerService = answerService;
     }
@@ -31,14 +33,14 @@ public class TelegramFacade {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             return callbackQueryHandler.processCallbackQuery(callbackQuery);
         } else {
-            if (firstTimeIncome){
+            if (firstTimeIncome) {
                 Message message = update.getMessage();
-                mainMessageId = message.getMessageId();
+                memory.setMainMessageId(message.getMessageId());
                 firstTimeIncome = false;
             }
             Message message = update.getMessage();
             if (message != null && message.hasText()) {
-//                answerService.deleteAllMessages(message.getChatId(), message);
+                answerService.deleteAllMessages(message.getChatId(), message);
                 return messageHandler.handleInputMessage(message);
             }
         }

@@ -16,7 +16,7 @@ public class UserDAO {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserDAO( UserRepository userRepository) {
+    public UserDAO(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -27,11 +27,23 @@ public class UserDAO {
     public User findByTelegramId(long id) {
         return userRepository.findByTelegramId(id);
     }
+
+    public User findBySubscriber(boolean subscriber) {
+        return userRepository.findBySubscriber(subscriber);
+    }
+
     public User findByTelegramTag(String telegramTag) {
         return userRepository.findByTelegramTag(telegramTag);
     }
+
     public List<User> findAllBySubscriber(Boolean subscription) {
         List<User> users = userRepository.findAllBySubscriber(subscription);
+        users.sort(comparator);
+        return users;
+    }
+
+    public List<User> findAllByPersonGroup(String group) {
+        List<User> users = userRepository.findAllByPersonGroup(group);
         users.sort(comparator);
         return users;
     }
