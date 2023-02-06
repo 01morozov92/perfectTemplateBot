@@ -1,10 +1,9 @@
 package com.template.perfecttemplatebot.data_base.entity;
 
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "users")

@@ -70,7 +70,7 @@ public class AnswerService {
             try {
                 if (!messageId.equals(memory.getMainMessageId()) && !messageId.equals(memory.getMainMenuMessageId())) {
                     bot.execute(DeleteMessage.builder()
-                            .chatId(String.valueOf(userId))
+                            .chatId(userId)
                             .messageId(messageId)
                             .build());
                 }
