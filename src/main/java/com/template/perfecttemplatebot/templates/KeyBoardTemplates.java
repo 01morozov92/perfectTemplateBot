@@ -123,24 +123,30 @@ public class KeyBoardTemplates {
         secondBtnSecondMenu.setText("2 кнопка второго меню");
         InlineKeyboardButton thirdBtnSecondMenu = new InlineKeyboardButton();
         thirdBtnSecondMenu.setText("3 кнопка второго меню");
+        InlineKeyboardButton back = new InlineKeyboardButton();
+        back.setText("Назад");
 
         firstBtnSecondMenu.setCallbackData("first_btn_second_menu");
         secondBtnSecondMenu.setCallbackData("second_btn_second_menu");
         thirdBtnSecondMenu.setCallbackData("third_btn_second_menu");
+        back.setCallbackData("back");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
 
         keyboardButtonsRow1.add(firstBtnSecondMenu);
         keyboardButtonsRow2.add(secondBtnSecondMenu);
         keyboardButtonsRow3.add(thirdBtnSecondMenu);
+        keyboardButtonsRow4.add(back);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
         rowList.add(keyboardButtonsRow3);
+        rowList.add(keyboardButtonsRow4);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
         if (isEdit) {
@@ -159,24 +165,30 @@ public class KeyBoardTemplates {
         secondBtnSecondMenu.setText("2 кнопка третьего меню");
         InlineKeyboardButton thirdBtnSecondMenu = new InlineKeyboardButton();
         thirdBtnSecondMenu.setText("3 кнопка третьего меню");
+        InlineKeyboardButton back = new InlineKeyboardButton();
+        back.setText("Назад");
 
         firstBtnSecondMenu.setCallbackData("first_btn_third_menu");
         secondBtnSecondMenu.setCallbackData("second_btn_third_menu");
         thirdBtnSecondMenu.setCallbackData("third_btn_third_menu");
+        back.setCallbackData("back");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
 
         keyboardButtonsRow1.add(firstBtnSecondMenu);
         keyboardButtonsRow2.add(secondBtnSecondMenu);
         keyboardButtonsRow3.add(thirdBtnSecondMenu);
+        keyboardButtonsRow4.add(back);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
         rowList.add(keyboardButtonsRow3);
+        rowList.add(keyboardButtonsRow4);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
         if (isEdit) {
