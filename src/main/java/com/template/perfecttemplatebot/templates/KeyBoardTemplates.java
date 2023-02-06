@@ -152,7 +152,7 @@ public class KeyBoardTemplates {
         if (isEdit) {
             return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Это вторая клавиатура", memory, botState, botStateCash, userId);
         } else {
-            return new Keyboard(inlineKeyboardMarkup, "Это вторая клавиатура", memory, botState, botStateCash, userId);
+            return new Keyboard(inlineKeyboardMarkup, "Это вторая клавиатура", memory, botState, botStateCash, userId, getFirstKeyboard(false, userId, BotState.FIRST_KEYBOARD));
         }
     }
 
@@ -194,7 +194,7 @@ public class KeyBoardTemplates {
         if (isEdit) {
             return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Это третья клавиатура", memory, botState, botStateCash, userId);
         } else {
-            return new Keyboard(inlineKeyboardMarkup, "Это третья клавиатура", memory, botState, botStateCash, userId);
+            return new Keyboard(inlineKeyboardMarkup, "Это третья клавиатура", memory, botState, botStateCash, userId, getSecondKeyBoard(false, userId, BotState.SECOND_KEYBOARD));
         }
     }
 }

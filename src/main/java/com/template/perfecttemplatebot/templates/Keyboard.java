@@ -18,6 +18,7 @@ public class Keyboard {
     private final BotState botState;
     private final BotStateCash botStateCash;
     private final Long userId;
+    private Keyboard previewKeyBoard;
 
     public Keyboard(InlineKeyboardMarkup replyKeyboard, String keyBoardDescription, Memory memory, BotState botState, BotStateCash botStateCash, Long userId) {
         this.replyKeyboard = replyKeyboard;
@@ -26,7 +27,19 @@ public class Keyboard {
         this.botState = botState;
         this.botStateCash = botStateCash;
         this.userId = userId;
-        saveKeyboard(memory);
+        memory.saveKeyboard(this);
+        botStateCash.saveBotState(userId, botState);
+    }
+
+    public Keyboard(InlineKeyboardMarkup replyKeyboard, String keyBoardDescription, Memory memory, BotState botState, BotStateCash botStateCash, Long userId, Keyboard previewKeyBoard) {
+        this.replyKeyboard = replyKeyboard;
+        this.keyBoardDescription = keyBoardDescription;
+        this.memory = memory;
+        this.botState = botState;
+        this.botStateCash = botStateCash;
+        this.userId = userId;
+        this.previewKeyBoard = previewKeyBoard;
+        memory.saveKeyboard(this);
         botStateCash.saveBotState(userId, botState);
     }
 
@@ -39,10 +52,4 @@ public class Keyboard {
         this.userId = userId;
         botStateCash.saveBotState(userId, botState);
     }
-
-    private void saveKeyboard(Memory memory) {
-        memory.getKeyboards().add(this);
-    }
-
-
 }

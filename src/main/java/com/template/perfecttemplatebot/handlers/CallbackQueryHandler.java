@@ -46,54 +46,51 @@ public class CallbackQueryHandler {
         Integer messageId = callbackQuery.getMessage().getMessageId();
         Message message = callbackQuery.getMessage();
 
-        BotApiMethod<?> callBackAnswer = null;
 
         String data = callbackQuery.getData();
         switch (data) {
-            case ("back") :
-                callbackAnswer = answerService.drawKeyBoardWithMsg(userId, memory.getLastKeyboard(userId));
+            case ("back") -> callbackAnswer = answerService.drawKeyBoardWithMsg(userId, memory.getPreviewKeyBoard(userId));
             //первая клавиатура
-            case ("first_button"):
-                callBackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSecondKeyBoard(true, userId, BotState.START));
-                break;
-            case ("second_button"):
-                callBackAnswer = new SendMessage(String.valueOf(chatId), "Вторая заглушка");
+            case ("first_button") ->
+                    callbackAnswer = answerService.drawKeyBoardWithMsg(userId, keyBoardTemplates.getSecondKeyBoard(
+                            false, userId, BotState.SUB_MENU_1));
+            case ("second_button") -> {
+                callbackAnswer = new SendMessage(String.valueOf(chatId), "Вторая заглушка");
                 botStateCash.saveBotState(userId, BotState.START);
-                break;
-            case ("third_button"):
-                callBackAnswer = new SendMessage(String.valueOf(chatId), "Тертья заглушка");
+            }
+            case ("third_button") -> {
+                callbackAnswer = new SendMessage(String.valueOf(chatId), "Тертья заглушка");
                 botStateCash.saveBotState(userId, BotState.START);
-                break;
-            case ("fourth_button"):
-                callBackAnswer = answerService.sendText(chatId, "Четвертая заглушка");
+            }
+            case ("fourth_button") -> {
+                callbackAnswer = answerService.sendText(chatId, "Четвертая заглушка");
                 botStateCash.saveBotState(userId, BotState.START);
-                break;
+            }
             //вторая клавиатура
-            case ("first_btn_second_menu"):
-                callbackAnswer = answerService.editKeyBoardWithMsg(chatId, keyBoardTemplates.getThirdKeyBoard(true, userId, BotState.START), messageId);
-                break;
-            case ("second_btn_second_menu"):
-                callBackAnswer = new SendMessage(String.valueOf(chatId), "Вторая заглушка подменю 1");
+            case ("first_btn_second_menu") -> callbackAnswer = answerService.drawKeyBoardWithMsg(
+                    userId, keyBoardTemplates.getThirdKeyBoard(false, userId, BotState.SUB_MENU_2));
+            case ("second_btn_second_menu") -> {
+                callbackAnswer = new SendMessage(String.valueOf(chatId), "Вторая заглушка подменю 1");
                 botStateCash.saveBotState(userId, BotState.START);
-                break;
-            case ("third_btn_second_menu"):
-                callBackAnswer = new SendMessage(String.valueOf(chatId), "Третья заглушка подменю 1");
+            }
+            case ("third_btn_second_menu") -> {
+                callbackAnswer = new SendMessage(String.valueOf(chatId), "Третья заглушка подменю 1");
                 botStateCash.saveBotState(userId, BotState.START);
-                break;
+            }
             //третья клавиатура
-            case ("first_btn_third_menu"):
-                callBackAnswer = new SendMessage(String.valueOf(chatId), "Первая заглушка подменю 2");
+            case ("first_btn_third_menu") -> {
+                callbackAnswer = new SendMessage(String.valueOf(chatId), "Первая заглушка подменю 2");
                 botStateCash.saveBotState(userId, BotState.SUB_MENU_2);
-                break;
-            case ("second_btn_third_menu"):
-                callBackAnswer = new SendMessage(String.valueOf(chatId), "Вторая заглушка подменю 2");
+            }
+            case ("second_btn_third_menu") -> {
+                callbackAnswer = new SendMessage(String.valueOf(chatId), "Вторая заглушка подменю 2");
                 botStateCash.saveBotState(userId, BotState.START);
-                break;
-            case ("third_btn_third_menu"):
-                callBackAnswer = new SendMessage(String.valueOf(chatId), "Третья заглушка подменю 2");
+            }
+            case ("third_btn_third_menu") -> {
+                callbackAnswer = new SendMessage(String.valueOf(chatId), "Третья заглушка подменю 2");
                 botStateCash.saveBotState(userId, BotState.START);
-                break;
+            }
         }
-        return callBackAnswer;
+        return callbackAnswer;
     }
 }

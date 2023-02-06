@@ -23,10 +23,14 @@ public class Memory {
         this.botStateCash = botStateCash;
     }
 
-    public Keyboard getLastKeyboard(Long userId){
-        Keyboard lastKeyboard = keyboards.get(keyboards.size()-2);
-        botStateCash.saveBotState(userId, lastKeyboard.getBotState());
-        keyboards.add(lastKeyboard);
-        return lastKeyboard;
+    public Keyboard getPreviewKeyBoard(Long userId) {
+        Keyboard lastKeyboard = keyboards.get(keyboards.size() - 1);
+        botStateCash.saveBotState(userId, keyboards.get(keyboards.indexOf(lastKeyboard) - 1).getBotState());
+        keyboards.add(keyboards.get(keyboards.indexOf(lastKeyboard) - 1));
+        return lastKeyboard.getPreviewKeyBoard();
+    }
+
+    public void saveKeyboard(Keyboard keyboard) {
+        keyboards.add(keyboard);
     }
 }
