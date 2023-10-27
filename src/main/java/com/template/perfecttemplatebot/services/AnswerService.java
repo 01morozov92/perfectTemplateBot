@@ -1,4 +1,4 @@
-package com.template.perfecttemplatebot.service;
+package com.template.perfecttemplatebot.services;
 
 import com.template.perfecttemplatebot.bot.TelegramBot;
 import com.template.perfecttemplatebot.cash.Memory;

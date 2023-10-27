@@ -1,4 +1,4 @@
-package com.template.perfecttemplatebot.service;
+package com.template.perfecttemplatebot.services;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -18,10 +18,10 @@ public class BotStateCash {
     private BotState lastBotState;
     private final Map<Long, BotState> botStateMap = new LinkedHashMap<>();
 
-    public BotState saveBotState(long userId, BotState botState) {
+    public void saveBotState(long userId, BotState botState) {
         botStateMap.put(userId, botState);
         lastBotState = botState;
-        return botStateMap.get(userId);
+        botStateMap.get(userId);
     }
 
     public BotState getPreviewBotState() {
