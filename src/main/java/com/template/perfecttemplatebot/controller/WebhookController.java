@@ -34,7 +34,7 @@ public class WebhookController {
     }
 
     @GetMapping
-    public ResponseEntity get() {
+    public ResponseEntity<?> get() {
         return ResponseEntity.ok().build();
     }
 
