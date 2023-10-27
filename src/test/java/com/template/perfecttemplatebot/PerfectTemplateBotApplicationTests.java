@@ -8,6 +8,7 @@ class PerfectTemplateBotApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("It's all going alright");
     }
 
 }

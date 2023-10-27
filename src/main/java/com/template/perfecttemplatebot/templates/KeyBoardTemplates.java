@@ -1,16 +1,20 @@
 package com.template.perfecttemplatebot.templates;
 
+import com.template.perfecttemplatebot.cash.BotStateCash;
+import com.template.perfecttemplatebot.cash.Memory;
 import com.template.perfecttemplatebot.data_base.DAO.UserDAO;
-import lombok.*;
+import com.template.perfecttemplatebot.enums.BotState;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +28,18 @@ public class KeyBoardTemplates {
     @Value("${telegrambot.adminId}")
     private int admin_id;
 
-    public KeyBoardTemplates(UserDAO userDAO) {
+    private final Memory memory;
+    private final BotStateCash botStateCash;
+
+    public KeyBoardTemplates(UserDAO userDAO, Memory memory, BotStateCash botStateCash) {
         this.userDAO = userDAO;
+        this.memory = memory;
+        this.botStateCash = botStateCash;
     }
 
-    private SendMessage createMessageWithKeyboard(final long chatId,
-                                                  String textMessage,
-                                                  final ReplyKeyboardMarkup replyKeyboardMarkup) {
-        final SendMessage sendMessage = new SendMessage();
-        sendMessage.enableMarkdown(true);
+    private SendMessage createMessageWithKeyboard(long chatId, String textMessage, ReplyKeyboardMarkup replyKeyboardMarkup) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(false);
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(textMessage);
         if (replyKeyboardMarkup != null) {
@@ -41,10 +48,9 @@ public class KeyBoardTemplates {
         return sendMessage;
     }
 
-    public SendMessage getMainMenuMessage(final long chatId, final String textMessage, final long userId) {
+    public SendMessage getMainMenuMessage(final String textMessage, final long userId) {
         final ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(userId);
-
-        return createMessageWithKeyboard(chatId, textMessage, replyKeyboardMarkup);
+        return createMessageWithKeyboard(userId, textMessage, replyKeyboardMarkup);
     }
 
     //Main menu
@@ -76,7 +82,7 @@ public class KeyBoardTemplates {
         return replyKeyboardMarkup;
     }
 
-    public KeyBoard getFirstKeyBoard() {
+    public Keyboard getFirstKeyboard(boolean isEdit, long userId, BotState botState) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtn = new InlineKeyboardButton();
@@ -104,11 +110,11 @@ public class KeyBoardTemplates {
 
         inlineKeyboardMarkup.setKeyboard(rowList);
 
-        return new KeyBoard(inlineKeyboardMarkup, "Это первая клавиатура");
+        return new Keyboard(inlineKeyboardMarkup, "Это первая клавиатура", memory, botState, botStateCash, userId);
     }
 
     //set calbackquery keyboard for push edit
-    public KeyBoard getSecondKeyBoard() {
+    public Keyboard getSecondKeyBoard(boolean isEdit, Long userId, BotState botState) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -117,31 +123,40 @@ public class KeyBoardTemplates {
         secondBtnSecondMenu.setText("2 кнопка второго меню");
         InlineKeyboardButton thirdBtnSecondMenu = new InlineKeyboardButton();
         thirdBtnSecondMenu.setText("3 кнопка второго меню");
+        InlineKeyboardButton back = new InlineKeyboardButton();
+        back.setText("Назад");
 
         firstBtnSecondMenu.setCallbackData("first_btn_second_menu");
         secondBtnSecondMenu.setCallbackData("second_btn_second_menu");
         thirdBtnSecondMenu.setCallbackData("third_btn_second_menu");
+        back.setCallbackData("back");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
 
         keyboardButtonsRow1.add(firstBtnSecondMenu);
         keyboardButtonsRow2.add(secondBtnSecondMenu);
         keyboardButtonsRow3.add(thirdBtnSecondMenu);
+        keyboardButtonsRow4.add(back);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
         rowList.add(keyboardButtonsRow3);
+        rowList.add(keyboardButtonsRow4);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new KeyBoard(inlineKeyboardMarkup, "Это вторая клавиатура");
+        if (isEdit) {
+            return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Это вторая клавиатура", memory, botState, botStateCash, userId);
+        } else {
+            return new Keyboard(inlineKeyboardMarkup, "Это вторая клавиатура", memory, botState, botStateCash, userId, getFirstKeyboard(false, userId, BotState.FIRST_KEYBOARD));
+        }
     }
 
-    public KeyBoard getThirdKeyBoard() {
+    public Keyboard getThirdKeyBoard(boolean isEdit, Long userId, BotState botState) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         InlineKeyboardButton firstBtnSecondMenu = new InlineKeyboardButton();
@@ -150,41 +165,36 @@ public class KeyBoardTemplates {
         secondBtnSecondMenu.setText("2 кнопка третьего меню");
         InlineKeyboardButton thirdBtnSecondMenu = new InlineKeyboardButton();
         thirdBtnSecondMenu.setText("3 кнопка третьего меню");
+        InlineKeyboardButton back = new InlineKeyboardButton();
+        back.setText("Назад");
 
         firstBtnSecondMenu.setCallbackData("first_btn_third_menu");
         secondBtnSecondMenu.setCallbackData("second_btn_third_menu");
         thirdBtnSecondMenu.setCallbackData("third_btn_third_menu");
+        back.setCallbackData("back");
 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
 
         keyboardButtonsRow1.add(firstBtnSecondMenu);
         keyboardButtonsRow2.add(secondBtnSecondMenu);
         keyboardButtonsRow3.add(thirdBtnSecondMenu);
+        keyboardButtonsRow4.add(back);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow1);
         rowList.add(keyboardButtonsRow2);
         rowList.add(keyboardButtonsRow3);
+        rowList.add(keyboardButtonsRow4);
 
         inlineKeyboardMarkup.setKeyboard(rowList);
-
-        return new KeyBoard(inlineKeyboardMarkup, "Это третья клавиатура");
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    static public class KeyBoard{
-
-        private final ReplyKeyboard replyKeyboard;
-        private final String keyBoardDescription;
-
-        public KeyBoard(ReplyKeyboard replyKeyboard, String keyBoardDescription) {
-            this.replyKeyboard = replyKeyboard;
-            this.keyBoardDescription = keyBoardDescription;
+        if (isEdit) {
+            return new Keyboard("Без сохранения", inlineKeyboardMarkup, "Это третья клавиатура", memory, botState, botStateCash, userId);
+        } else {
+            return new Keyboard(inlineKeyboardMarkup, "Это третья клавиатура", memory, botState, botStateCash, userId, getSecondKeyBoard(false, userId, BotState.SECOND_KEYBOARD));
         }
     }
 }

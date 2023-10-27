@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
@@ -25,6 +26,8 @@ public class TelegramBot extends SpringWebhookBot {
         super(options, setWebhook);
         this.telegramFacade = telegramFacade;
     }
+
+    @Autowired
     public TelegramBot(TelegramFacade telegramFacade, SetWebhook setWebhook) {
         super(setWebhook);
         this.telegramFacade = telegramFacade;

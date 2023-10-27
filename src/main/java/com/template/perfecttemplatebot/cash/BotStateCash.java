@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Service
@@ -13,9 +14,18 @@ import java.util.Map;
 @Getter
 //Used to save state bot.
 public class BotStateCash {
-    private final Map<Long, BotState> botStateMap = new HashMap<>();
 
-    public void saveBotState(long userId, BotState botState) {
+    private BotState lastBotState;
+    private final Map<Long, BotState> botStateMap = new LinkedHashMap<>();
+
+    public BotState saveBotState(long userId, BotState botState) {
         botStateMap.put(userId, botState);
+        lastBotState = botState;
+        return botStateMap.get(userId);
+    }
+
+    public BotState getPreviewBotState() {
+        ArrayList<BotState> botStates = new ArrayList<>(botStateMap.values());
+        return botStates.get(botStates.size() - 2);
     }
 }
